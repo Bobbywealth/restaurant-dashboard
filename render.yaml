@@ -3,8 +3,9 @@ services:
     region: oregon
     runtime: node
     repo: https://github.com/Bobbywealth/restaurant-dashboard
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node server.js
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
