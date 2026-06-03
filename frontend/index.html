@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Command Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #0a0a0f; color: #f0f0f5; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1a2e; }
+    ::-webkit-scrollbar-thumb { background: #3a3a5c; border-radius: 3px; }
+    .glass { background: rgba(20,20,35,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%); border: 1px solid rgba(255,255,255,0.06); }
+    .accent-red { color: #ff6b6b; }
+    .accent-green { color: #51cf66; }
+    .accent-yellow { color: #ffd43b; }
+    .accent-blue { color: #339af0; }
+    .border-red { border-color: #ff6b6b; }
+    .border-green { border-color: #51cf66; }
+    .border-yellow { border-color: #ffd43b; }
+    .border-blue { border-color: #339af0; }
+    .nav-btn { transition: all 0.2s; }
+    .nav-btn:hover { background: rgba(255,255,255,0.08); }
+    .nav-btn.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+    .order-row:hover { background: rgba(255,255,255,0.04); }
+    canvas { max-height: 280px; }
+    .pulse-green { animation: pulseGreen 2s infinite; }
+    @keyframes pulseGreen { 0%,100%{box-shadow:0 0 0 0 rgba(81,207,102,0.4)} 50%{box-shadow:0 0 0 8px rgba(81,207,102,0)} }
+    .pulse-red { animation: pulseRed 2s infinite; }
+    @keyframes pulseRed { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0.4)} 50%{box-shadow:0 0 0 8px rgba(255,107,107,0)} }
+    .badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+    .badge-pos { background: rgba(81,207,102,0.15); color: #51cf66; border: 1px solid rgba(51,207,102,0.3); }
+    .badge-dd { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
+    .badge-ue { background: rgba(58,134,255,0.15); color: #339af0; border: 1px solid rgba(51,138,255,0.3); }
+    .badge-gh { background: rgba(255,212,59,0.15); color: #ffd43b; border: 1px solid rgba(255,212,59,0.3); }
+    .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #339af0; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    input, select { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); color: #f0f0f5; border-radius: 8px; padding: 8px 12px; }
+    input:focus, select:focus { outline: none; border-color: #339af0; }
+    .tab-btn { padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; border: 1px solid transparent; color: #888; }
+    .tab-btn.active { background: rgba(51,154,240,0.15); color: #339af0; border-color: rgba(51,154,240,0.3); }
+    .tab-btn:hover:not(.active) { color: #ccc; }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="fixed left-0 top-0 h-full w-64 glass z-50 flex flex-col">
+    <div class="p-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center font-black text-white text-lg">R</div>
+        <div>
+          <div class="font-bold text-white text-sm">Command Center</div>
+          <div class="text-xs text-gray-400">Restaurant Operations</div>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 py-4 overflow-y-auto">
+      <div class="px-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Overview</div>
+      <button onclick="showSection('dashboard')" class="nav-btn active w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-dashboard">
+        <span class="text-lg">📊</span> Dashboard
+      </button>
+      <button onclick="showSection('orders')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-orders">
+        <span class="text-lg">🧾</span> Orders
+      </button>
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Platforms</div>
+      <button onclick="showSection('doordash')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-doordash">
+        <span class="text-lg">🚴</span> DoorDash
+      </button>
+      <button onclick="showSection('ubereats')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-ubereats">
+        <span class="text-lg">⚡</span> Uber Eats
+      </button>
+      <button onclick="showSection('grubhub')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-grubhub">
+        <span class="text-lg">🍔</span> Grubhub
+      </button>
+      <button onclick="showSection('pos')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-pos">
+        <span class="text-lg">💳</span> Toast POS
+      </button>
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tools</div>
+      <button onclick="showSection('marketing')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-marketing">
+        <span class="text-lg">📣</span> Marketing
+      </button>
+    </nav>
+    <div class="p-4 border-t border-white/10">
+      <div class="flex items-center justify-between text-xs text-gray-500">
+        <span id="clock"></span>
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse-green"></span> Live</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="ml-64 min-h-screen p-6">
+    <!-- DASHBOARD -->
+    <section id="section-dashboard" class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-black text-white">Dashboard</h1>
+          <p class="text-gray-400 text-sm mt-1" id="dateLabel"></p>
+        </div>
+        <div class="flex gap-3">
+          <select id="dateFilter" onchange="fetchAll()">
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+          </select>
+          <button onclick="fetchAll()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+            <span id="refreshIcon">🔄</span> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">💰</span>
+            <span class="badge badge-pos">POS</span>
+          </div>
+          <div class="text-3xl font-black text-white" id="kpi-pos-revenue">--</div>
+          <div class="text-xs text-gray-400 mt-1">POS Revenue</div>
+          <div class="text-xs accent-green mt-1" id="kpi-pos-orders">-- orders</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">🚴</span>
+            <span class="badge badge-dd">DoorDash</span>
+          </div>
+          <div class="text-3xl font-black text-white" id="kpi-dd-revenue">--</div>
+          <div class="text-xs text-gray-400 mt-1">DoorDash Revenue</div>
+          <div class="text-xs accent-red mt-1" id="kpi-dd-orders">-- orders</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">⚡</span>
+            <span class="badge badge-ue">Uber Eats</span>
+          </div>
+          <div class="text-3xl font-black text-white" id="kpi-ue-revenue">--</div>
+          <div class="text-xs text-gray-400 mt-1">Uber Eats Revenue</div>
+          <div class="text-xs accent-blue mt-1" id="kpi-ue-orders">-- orders</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">🍔</span>
+            <span class="badge badge-gh">Grubhub</span>
+          </div>
+          <div class="text-3xl font-black text-white" id="kpi-gh-revenue">--</div>
+          <div class="text-xs text-gray-400 mt-1">Grubhub Revenue</div>
+          <div class="text-xs accent-yellow mt-1" id="kpi-gh-orders">-- orders</div>
+        </div>
+      </div>
+
+      <!-- Combined Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Combined Revenue</div>
+          <div class="text-4xl font-black text-white mt-2" id="kpi-combined-revenue">--</div>
+          <div class="text-xs text-gray-500 mt-1">All channels</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Orders</div>
+          <div class="text-4xl font-black text-white mt-2" id="kpi-combined-orders">--</div>
+          <div class="text-xs text-gray-500 mt-1">All channels</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Avg Order Value</div>
+          <div class="text-4xl font-black text-white mt-2" id="kpi-avg-order">--</div>
+          <div class="text-xs text-gray-500 mt-1">All channels</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="stat-card rounded-2xl p-5">
+          <div class="font-bold text-white mb-4">📈 Revenue by Platform</div>
+          <canvas id="revenueChart"></canvas>
+        </div>
+        <div class="stat-card rounded-2xl p-5">
+          <div class="font-bold text-white mb-4">🧁 Orders by Platform</div>
+          <canvas id="ordersChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Platform Breakdown -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="stat-card rounded-2xl p-5">
+          <div class="font-bold text-white mb-4">📋 Platform Details</div>
+          <div class="space-y-3" id="platformDetails"></div>
+        </div>
+        <div class="stat-card rounded-2xl p-5">
+          <div class="font-bold text-white mb-4">🔄 Revenue Mix</div>
+          <canvas id="mixChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section id="section-orders" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">All Orders</h1>
+        <div class="flex gap-3">
+          <select id="ordersPlatform" onchange="fetchOrders()">
+            <option value="all">All Platforms</option>
+            <option value="pos">Toast POS</option>
+            <option value="doordash">DoorDash</option>
+            <option value="ubereats">Uber Eats</option>
+            <option value="grubhub">Grubhub</option>
+          </select>
+          <select id="ordersDateFilter" onchange="fetchOrders()">
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+          </select>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-white/5">
+            <tr class="text-gray-400 text-xs uppercase tracking-wider">
+              <th class="text-left p-4 font-bold">Order ID</th>
+              <th class="text-left p-4 font-bold">Platform</th>
+              <th class="text-left p-4 font-bold">Time</th>
+              <th class="text-left p-4 font-bold">Status</th>
+              <th class="text-right p-4 font-bold">Total</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOORDASH -->
+    <section id="section-doordash" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">🚴 DoorDash</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-3xl font-black text-white mt-2" id="dd-revenue">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-3xl font-black text-white mt-2" id="dd-orders">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-3xl font-black text-white mt-2" id="dd-avg">--</div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Recent DoorDash Orders</div>
+        <div class="space-y-2" id="dd-orders-list"></div>
+      </div>
+    </section>
+
+    <!-- UBEREATS -->
+    <section id="section-ubereats" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">⚡ Uber Eats</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-3xl font-black text-white mt-2" id="ue-revenue">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-3xl font-black text-white mt-2" id="ue-orders">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-3xl font-black text-white mt-2" id="ue-avg">--</div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Recent Uber Eats Orders</div>
+        <div class="space-y-2" id="ue-orders-list"></div>
+      </div>
+    </section>
+
+    <!-- GRUBHUB -->
+    <section id="section-grubhub" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">🍔 Grubhub</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-3xl font-black text-white mt-2" id="gh-revenue">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-3xl font-black text-white mt-2" id="gh-orders">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-3xl font-black text-white mt-2" id="gh-avg">--</div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Recent Grubhub Orders</div>
+        <div class="space-y-2" id="gh-orders-list"></div>
+      </div>
+    </section>
+
+    <!-- TOAST POS -->
+    <section id="section-pos" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">💳 Toast POS</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-3xl font-black text-white mt-2" id="pos-revenue">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-3xl font-black text-white mt-2" id="pos-orders">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-3xl font-black text-white mt-2" id="pos-avg">--</div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Recent POS Orders</div>
+        <div class="space-y-2" id="pos-orders-list"></div>
+      </div>
+    </section>
+
+    <!-- MARKETING -->
+    <section id="section-marketing" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">📣 Marketing Hub</h1>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="stat-card rounded-2xl p-6">
+          <h3 class="font-bold text-white mb-4">✉️ Campaign Launcher</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs text-gray-400 font-bold uppercase">Campaign Type</label>
+              <select id="campaignType" class="w-full mt-1">
+                <option value="sms">SMS Promotion</option>
+                <option value="email">Email Newsletter</option>
+                <option value="social">Social Media Post</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 font-bold uppercase">Message</label>
+              <textarea id="campaignMsg" rows="4" class="w-full mt-1" placeholder="Today's special: Jerk chicken platter $12.99! Call (908) 686-8178 to order..."></textarea>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 font-bold uppercase">Platforms</label>
+              <div class="flex gap-4 mt-2">
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> DoorDash</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> Uber Eats</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> Grubhub</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> In-Store</label>
+              </div>
+            </div>
+            <button onclick="launchCampaign()" class="w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-bold py-3 rounded-xl transition-all">
+              🚀 Launch Campaign
+            </button>
+          </div>
+        </div>
+        <div class="stat-card rounded-2xl p-6">
+          <h3 class="font-bold text-white mb-4">📊 Quick Promotions</h3>
+          <div class="space-y-3">
+            <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('LUNCH_SPECIAL')">
+              <div class="font-bold text-white">🍱 Lunch Special</div>
+              <div class="text-xs text-gray-400 mt-1">10% off orders 11am-2pm</div>
+              <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('FIRST_ORDER')">
+              <div class="font-bold text-white">👋 First Order Discount</div>
+              <div class="text-xs text-gray-400 mt-1">15% off first order</div>
+              <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('FREE_DELIVERY')">
+              <div class="font-bold text-white">🚚 Free Delivery</div>
+              <div class="text-xs text-gray-400 mt-1">No delivery fee on orders $25+</div>
+              <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('COMBO_DEAL')">
+              <div class="font-bold text-white">🍛 Combo Meal Deal</div>
+              <div class="text-xs text-gray-400 mt-1">Entree + sides + drink for $14.99</div>
+              <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-6">
+        <h3 class="font-bold text-white mb-4">📅 Scheduled Campaigns</h3>
+        <div class="text-sm text-gray-400" id="scheduledCampaigns">
+          <div class="flex items-center justify-center py-8">
+            <div class="text-center">
+              <div class="text-3xl mb-2">📭</div>
+              <div>No scheduled campaigns yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card rounded-2xl p-6">
+        <h3 class="font-bold text-white mb-4">🎯 Marketing Stats</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-white/5 rounded-xl p-4 text-center">
+            <div class="text-2xl font-black text-white" id="mkt-total-sent">--</div>
+            <div class="text-xs text-gray-400 mt-1">Messages Sent</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4 text-center">
+            <div class="text-2xl font-black text-white" id="mkt-open-rate">--</div>
+            <div class="text-xs text-gray-400 mt-1">Open Rate</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4 text-center">
+            <div class="text-2xl font-black text-white" id="mkt-orders-from-campaign">--</div>
+            <div class="text-xs text-gray-400 mt-1">Orders from Campaign</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API = window.location.origin;
+    let state = { pos: null, dd: null, ue: null, gh: null, charts: {} };
+    const dateFilter = document.getElementById('dateFilter');
+
+    function fmt(n) { return '$' + (n || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+    function clock() {
+      const el = document.getElementById('clock');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+    }
+    setInterval(clock, 1000); clock();
+
+    function today() {
+      const d = new Date();
+      return d.toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    }
+    document.getElementById('dateLabel').textContent = today();
+
+    function badge(src) {
+      const map = {toast_pos:'POS',doordash:'DD',ubereats:'UE',grubhub:'GH'};
+      const cls = {toast_pos:'badge-pos',doordash:'badge-dd',ubereats:'badge-ue',grubhub:'badge-gh'};
+      return `<span class="badge ${cls[src]||'badge-pos'}">${map[src]||src}</span>`;
+    }
+
+    function statusBadge(s) {
+      const map = {COMPLETED:'bg-green-500/15 text-green-400',ACCEPTED:'bg-blue-500/15 text-blue-400',PREPARING:'bg-yellow-500/15 text-yellow-400',PENDING:'bg-gray-500/15 text-gray-400'};
+      return `<span class="text-xs px-2 py-0.5 rounded-full font-bold ${map[s]||map.PENDING}">${s||'PENDING'}</span>`;
+    }
+
+    async function api(path) {
+      try {
+        const r = await fetch(API + path);
+        if (!r.ok) throw new Error(r.statusText);
+        return await r.json();
+      } catch(e) { return {error: e.message}; }
+    }
+
+    async function fetchAll() {
+      const isToday = dateFilter.value === 'today';
+      const suffix = isToday ? '/today' : '/yesterday';
+
+      document.getElementById('refreshIcon').style.animation = 'spin 0.5s linear infinite';
+
+      const [summary, pos, dd, ue, gh] = await Promise.all([
+        api('/api/stats/summary'),
+        api('/api/pos' + suffix),
+        api('/api/doordash' + suffix),
+        api('/api/ubereats' + suffix),
+        api('/api/grubhub' + suffix)
+      ]);
+
+      state.pos = pos; state.dd = dd; state.ue = ue; state.gh = gh;
+
+      if (!summary.error) {
+        const s = summary;
+        document.getElementById('kpi-pos-revenue').textContent = fmt(s.pos?.totalRevenue);
+        document.getElementById('kpi-pos-orders').textContent = (s.pos?.totalOrders||0) + ' orders';
+        document.getElementById('kpi-dd-revenue').textContent = fmt(s.doordash?.totalRevenue);
+        document.getElementById('kpi-dd-orders').textContent = (s.doordash?.totalOrders||0) + ' orders';
+        document.getElementById('kpi-ue-revenue').textContent = fmt(s.ubereats?.totalRevenue);
+        document.getElementById('kpi-ue-orders').textContent = (s.ubereats?.totalOrders||0) + ' orders';
+        document.getElementById('kpi-gh-revenue').textContent = fmt(s.grubhub?.totalRevenue);
+        document.getElementById('kpi-gh-orders').textContent = (s.grubhub?.totalOrders||0) + ' orders';
+        document.getElementById('kpi-combined-revenue').textContent = fmt(s.combined?.totalRevenue);
+        document.getElementById('kpi-combined-orders').textContent = s.combined?.totalOrders || 0;
+        document.getElementById('kpi-avg-order').textContent = fmt(s.combined?.avgOrderValue);
+      }
+
+      updateCharts(dd.summary||{}, ue.summary||{}, gh.summary||{}, pos.summary||{});
+      updatePlatformDetails(dd, ue, gh, pos);
+
+      document.getElementById('refreshIcon').style.animation = '';
+    }
+
+    function updateCharts(dd, ue, gh, pos) {
+      const revCtx = document.getElementById('revenueChart')?.getContext('2d');
+      const ordCtx = document.getElementById('ordersChart')?.getContext('2d');
+      const mixCtx = document.getElementById('mixChart')?.getContext('2d');
+      if (!revCtx) return;
+
+      if (state.charts.revenue) state.charts.revenue.destroy();
+      if (state.charts.orders) state.charts.orders.destroy();
+      if (state.charts.mix) state.charts.mix.destroy();
+
+      state.charts.revenue = new Chart(revCtx, {
+        type: 'bar',
+        data: {
+          labels: ['DoorDash','Uber Eats','Grubhub','POS'],
+          datasets: [{
+            label: 'Revenue',
+            data: [dd.totalRevenue||0, ue.totalRevenue||0, gh.totalRevenue||0, pos.totalRevenue||0],
+            backgroundColor: ['rgba(255,107,107,0.7)','rgba(51,138,255,0.7)','rgba(255,212,59,0.7)','rgba(81,207,102,0.7)'],
+            borderRadius: 8
+          }]
+        },
+        options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#888'}}, x:{grid:{display:false},ticks:{color:'#888'}}} }
+      });
+
+      state.charts.orders = new Chart(ordCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['DoorDash','Uber Eats','Grubhub','POS'],
+          datasets: [{
+            data: [dd.totalOrders||0, ue.totalOrders||0, gh.totalOrders||0, pos.totalOrders||0],
+            backgroundColor: ['#ff6b6b','#339af0','#ffd43b','#51cf66'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#888',padding:20}}}}
+      });
+
+      const total3p = (dd.totalRevenue||0)+(ue.totalRevenue||0)+(gh.totalRevenue||0);
+      const posRev = pos.totalRevenue||0;
+      state.charts.mix = new Chart(mixCtx, {
+        type: 'pie',
+        data: {
+          labels: ['DoorDash','Uber Eats','Grubhub','In-Store POS'],
+          datasets: [{
+            data: [dd.totalRevenue||0, ue.totalRevenue||0, gh.totalRevenue||0, posRev],
+            backgroundColor: ['#ff6b6b','#339af0','#ffd43b','#51cf66'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#888',padding:20}}}}
+      });
+    }
+
+    function updatePlatformDetails(dd, ue, gh, pos) {
+      const el = document.getElementById('platformDetails');
+      if (!el) return;
+      const platforms = [
+        {name:'🚴 DoorDash', data:dd, color:'text-red-400'},
+        {name:'⚡ Uber Eats', data:ue, color:'text-blue-400'},
+        {name:'🍔 Grubhub', data:gh, color:'text-yellow-400'},
+        {name:'💳 Toast POS', data:pos, color:'text-green-400'}
+      ];
+      el.innerHTML = platforms.map(p => `
+        <div class="flex items-center justify-between py-2 border-b border-white/5">
+          <span class="${p.color} font-bold text-sm">${p.name}</span>
+          <div class="text-right">
+            <span class="text-white font-bold">${fmt(p.data?.summary?.totalRevenue)}</span>
+            <span class="text-gray-500 text-xs ml-2">${p.data?.summary?.totalOrders||0} orders</span>
+          </div>
+        </div>`).join('');
+    }
+
+    async function fetchOrders() {
+      const plat = document.getElementById('ordersPlatform').value;
+      const date = document.getElementById('ordersDateFilter').value;
+      const suffix = date === 'today' ? '/today' : '/yesterday';
+
+      let data;
+      if (plat === 'all') {
+        const [pos, dd, ue, gh] = await Promise.all([
+          api('/api/pos' + suffix), api('/api/doordash' + suffix),
+          api('/api/ubereats' + suffix), api('/api/grubhub' + suffix)
+        ]);
+        const all = [
+          ...(pos.orders||[]).map(o=>({...o, _source:'toast_pos', _id:o.guid||o.orderId})),
+          ...(dd.orders||[]).map(o=>({...o, _source:'doordash', _id:o.orderId})),
+          ...(ue.orders||[]).map(o=>({...o, _source:'ubereats', _id:o.orderId})),
+          ...(gh.orders||[]).map(o=>({...o, _source:'grubhub', _id:o.orderId}))
+        ];
+        data = all;
+      } else {
+        const d = await api('/api/' + plat + suffix);
+        data = (d.orders||[]).map(o=>({...o, _source:plat, _id:o.orderId||o.guid}));
+      }
+
+      const tbody = document.getElementById('ordersTable');
+      if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found</td></tr>'; return; }
+      tbody.innerHTML = data.slice(0,100).map(o => `
+        <tr class="order-row transition-colors cursor-pointer">
+          <td class="p-4 text-white font-mono text-xs">${o._id?.slice(0,20)||'--'}</td>
+          <td class="p-4">${badge(o._source)}</td>
+          <td class="p-4 text-gray-400 text-xs">${o.placedAt||o.createdAt||'--'}</td>
+          <td class="p-4">${statusBadge(o.status)}</td>
+          <td class="p-4 text-right font-bold text-white">${fmt(o.total||o.totalAmount)}</td>
+        </tr>`).join('');
+    }
+
+    function showSection(name) {
+      ['dashboard','orders','doordash','ubereats','grubhub','pos','marketing'].forEach(s => {
+        document.getElementById('section-'+s)?.classList.add('hidden');
+        document.getElementById('nav-'+s)?.classList.remove('active');
+      });
+      document.getElementById('section-'+name)?.classList.remove('hidden');
+      document.getElementById('nav-'+name)?.classList.add('active');
+
+      if (name === 'doordash') loadPlatformSection('doordash', state.dd, ['dd-revenue','dd-orders','dd-avg'], 'dd-orders-list');
+      if (name === 'ubereats') loadPlatformSection('ubereats', state.ue, ['ue-revenue','ue-orders','ue-avg'], 'ue-orders-list');
+      if (name === 'grubhub') loadPlatformSection('grubhub', state.gh, ['gh-revenue','gh-orders','gh-avg'], 'gh-orders-list');
+      if (name === 'pos') loadPlatformSection('pos', state.pos, ['pos-revenue','pos-orders','pos-avg'], 'pos-orders-list');
+      if (name === 'orders') fetchOrders();
+    }
+
+    function loadPlatformSection(key, data, ids, listId) {
+      if (!data) return;
+      const s = data.summary||{};
+      document.getElementById(ids[0]).textContent = fmt(s.totalRevenue);
+      document.getElementById(ids[1]).textContent = s.totalOrders || 0;
+      document.getElementById(ids[2]).textContent = fmt(s.avgOrderValue);
+      const list = document.getElementById(listId);
+      if (!list) return;
+      const orders = (data.orders||[]).slice(0,20);
+      if (!orders.length) { list.innerHTML = '<div class="text-center text-gray-500 py-6">No orders</div>'; return; }
+      list.innerHTML = orders.map(o => `
+        <div class="flex items-center justify-between py-2 border-b border-white/5 text-sm">
+          <div>
+            <div class="text-white font-mono text-xs">${o.orderId||o.guid||'--'}</div>
+            <div class="text-gray-500 text-xs">${o.placedAt||o.createdAt||'--'}</div>
+          </div>
+          <div class="text-right">${statusBadge(o.status)}<div class="text-white font-bold mt-1">${fmt(o.total||o.totalAmount)}</div></div>
+        </div>`).join('');
+    }
+
+    function insertPromotion(type) {
+      const msgs = {
+        LUNCH_SPECIAL: "🍱 LUNCH SPECIAL! 10% off all orders 11am-2pm. Call (908) 686-8178 to order ahead!",
+        FIRST_ORDER: "👋 New here? 15% off your first order! Use code WELCOME at checkout. Call (908) 686-8178",
+        FREE_DELIVERY: "🚚 FREE DELIVERY on orders $25+! We deliver to your door. Call (908) 686-8178",
+        COMBO_DEAL: "🍛 COMBO DEAL: Entree + 2 sides + drink for just $14.99! Available all day. Order now: (908) 686-8178"
+      };
+      const el = document.getElementById('campaignMsg');
+      if (el) el.value = msgs[type] || '';
+    }
+
+    function launchCampaign() {
+      const type = document.getElementById('campaignType')?.value;
+      const msg = document.getElementById('campaignMsg')?.value;
+      if (!msg) { alert('Write a message first!'); return; }
+      // In production: integrate with SMS/email/ social APIs
+      const output = document.getElementById('scheduledCampaigns');
+      if (output) {
+        output.innerHTML = `<div class="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
+          <span class="text-lg">✅</span>
+          <div><div class="font-bold">Campaign Queued!</div><div class="text-gray-400 text-xs">${msg.slice(0,60)}...</div></div>
+        </div>` + (output.innerHTML || '');
+      }
+      document.getElementById('campaignMsg').value = '';
+    }
+
+    fetchAll();
+    setInterval(fetchAll, 60000); // Auto-refresh every minute
+  </script>
+</body>
+</html>
