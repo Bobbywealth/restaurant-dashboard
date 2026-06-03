@@ -11,6 +11,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: TOAST_CLIENT_ID
-        sync: false
+        value: fWtDwDjMLuvklqFykpMuY9tbz19g1th9
       - key: TOAST_CLIENT_SECRET
-        sync: false
+        value: 3_uTSyXKvPZwZUMYlCV-PJFd8Twka8QnlORetJI2kxLe1ki7aW5c9ot3ySMBykwp
+      - key: RESTAURANT_GUID
+        value: 8d0d8d7b-1fcc-43fd-8be5-1413efbaaef7
