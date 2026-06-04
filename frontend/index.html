@@ -37,13 +37,20 @@
     .badge-dd { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
     .badge-ue { background: rgba(58,134,255,0.15); color: #339af0; border: 1px solid rgba(51,138,255,0.3); }
     .badge-gh { background: rgba(255,212,59,0.15); color: #ffd43b; border: 1px solid rgba(255,212,59,0.3); }
+    .badge-low { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
+    .badge-ok { background: rgba(81,207,102,0.15); color: #51cf66; border: 1px solid rgba(51,207,102,0.3); }
+    .badge-med { background: rgba(255,212,59,0.15); color: #ffd43b; border: 1px solid rgba(255,212,59,0.3); }
     .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #339af0; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
-    input, select { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); color: #f0f0f5; border-radius: 8px; padding: 8px 12px; }
-    input:focus, select:focus { outline: none; border-color: #339af0; }
+    input, select, textarea { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); color: #f0f0f5; border-radius: 8px; padding: 8px 12px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #339af0; }
     .tab-btn { padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; border: 1px solid transparent; color: #888; }
     .tab-btn.active { background: rgba(51,154,240,0.15); color: #339af0; border-color: rgba(51,154,240,0.3); }
     .tab-btn:hover:not(.active) { color: #ccc; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; }
+    .todo-check:checked + .todo-text { text-decoration: line-through; color: #666; }
+    .receipt-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
   </style>
 </head>
 <body>
@@ -79,6 +86,13 @@
       <button onclick="showSection('pos')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-pos">
         <span class="text-lg">💳</span> Toast POS
       </button>
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Management</div>
+      <button onclick="showSection('tasks')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-tasks">
+        <span class="text-lg">✅</span> Tasks
+      </button>
+      <button onclick="showSection('inventory')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-inventory">
+        <span class="text-lg">📦</span> Inventory
+      </button>
       <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tools</div>
       <button onclick="showSection('marketing')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-marketing">
         <span class="text-lg">📣</span> Marketing
@@ -94,6 +108,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="ml-64 min-h-screen p-6">
+
     <!-- DASHBOARD -->
     <section id="section-dashboard" class="space-y-6">
       <div class="flex items-center justify-between">
@@ -322,6 +337,120 @@
       </div>
     </section>
 
+    <!-- TASKS -->
+    <section id="section-tasks" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">✅ Task Management</h1>
+        <button onclick="openTaskModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+          + Add Task
+        </button>
+      </div>
+
+      <!-- Task Stats -->
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Tasks</div>
+          <div class="text-3xl font-black text-white mt-2" id="task-total">0</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Completed</div>
+          <div class="text-3xl font-black text-white mt-2" id="task-done">0</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Pending</div>
+          <div class="text-3xl font-black text-white mt-2" id="task-pending">0</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex gap-3">
+        <button onclick="filterTasks('all')" class="tab-btn active" id="tab-all">All</button>
+        <button onclick="filterTasks('pending')" class="tab-btn" id="tab-pending">Pending</button>
+        <button onclick="filterTasks('completed')" class="tab-btn" id="tab-completed">Completed</button>
+        <button onclick="filterTasks('high')" class="tab-btn" id="tab-high">🔴 High Priority</button>
+      </div>
+
+      <!-- Task List -->
+      <div class="stat-card rounded-2xl p-5">
+        <div class="space-y-3" id="taskList"></div>
+      </div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="section-inventory" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">📦 Inventory Management</h1>
+        <div class="flex gap-3">
+          <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
+            + Add Item
+          </button>
+          <button onclick="openReceiptModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
+            📄 Upload Receipt
+          </button>
+        </div>
+      </div>
+
+      <!-- Inventory Alerts -->
+      <div class="grid grid-cols-3 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Items</div>
+          <div class="text-3xl font-black text-white mt-2" id="inv-total">0</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">In Stock</div>
+          <div class="text-3xl font-black text-white mt-2" id="inv-ok">0</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Low Stock</div>
+          <div class="text-3xl font-black text-white mt-2" id="inv-low">0</div>
+        </div>
+      </div>
+
+      <!-- Search + Filter -->
+      <div class="flex gap-3">
+        <input type="text" id="inv-search" placeholder="Search items..." class="flex-1" oninput="renderInventory()" />
+        <select id="inv-category-filter" onchange="renderInventory()">
+          <option value="all">All Categories</option>
+          <option value="produce">Produce</option>
+          <option value="meat">Meat & Protein</option>
+          <option value="dry">Dry Goods</option>
+          <option value="beverages">Beverages</option>
+          <option value="supplies">Supplies</option>
+        </select>
+        <select id="inv-stock-filter" onchange="renderInventory()">
+          <option value="all">All Stock Levels</option>
+          <option value="low">Low Stock</option>
+          <option value="ok">In Stock</option>
+        </select>
+      </div>
+
+      <!-- Inventory Table -->
+      <div class="stat-card rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-white/5">
+            <tr class="text-gray-400 text-xs uppercase tracking-wider">
+              <th class="text-left p-4 font-bold">Item</th>
+              <th class="text-left p-4 font-bold">Category</th>
+              <th class="text-right p-4 font-bold">Qty</th>
+              <th class="text-right p-4 font-bold">Min</th>
+              <th class="text-left p-4 font-bold">Unit</th>
+              <th class="text-left p-4 font-bold">Status</th>
+              <th class="text-left p-4 font-bold">Last Restocked</th>
+              <th class="text-left p-4 font-bold">Receipt</th>
+              <th class="text-right p-4 font-bold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTable" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+
+      <!-- Receipt History -->
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">📄 Receipt History</div>
+        <div class="space-y-3" id="receiptList"></div>
+      </div>
+    </section>
+
     <!-- MARKETING -->
     <section id="section-marketing" class="hidden space-y-6">
       <h1 class="text-2xl font-black text-white">📣 Marketing Hub</h1>
@@ -412,12 +541,191 @@
     </section>
   </main>
 
+  <!-- TASK MODAL -->
+  <div id="taskModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white" id="taskModalTitle">Add Task</h2>
+        <button onclick="closeTaskModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Task Title *</label>
+          <input type="text" id="task-title" class="w-full mt-1" placeholder="e.g. Restock chicken supplies" />
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Priority</label>
+          <select id="task-priority" class="w-full mt-1">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Due Date</label>
+          <input type="date" id="task-due" class="w-full mt-1" />
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Description</label>
+          <textarea id="task-desc" rows="3" class="w-full mt-1" placeholder="Optional details..."></textarea>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="saveTask()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg">Save Task</button>
+          <button onclick="closeTaskModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY MODAL -->
+  <div id="inventoryModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white" id="invModalTitle">Add Inventory Item</h2>
+        <button onclick="closeInventoryModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Item Name *</label>
+          <input type="text" id="inv-name" class="w-full mt-1" placeholder="e.g. Chicken Breast" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Category</label>
+            <select id="inv-cat" class="w-full mt-1">
+              <option value="produce">Produce</option>
+              <option value="meat">Meat & Protein</option>
+              <option value="dry">Dry Goods</option>
+              <option value="beverages">Beverages</option>
+              <option value="supplies">Supplies</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Unit</label>
+            <input type="text" id="inv-unit" class="w-full mt-1" placeholder="e.g. lbs, cases, each" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Current Qty *</label>
+            <input type="number" id="inv-qty" class="w-full mt-1" placeholder="0" min="0" />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Min Qty *</label>
+            <input type="number" id="inv-min" class="w-full mt-1" placeholder="0" min="0" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Notes</label>
+          <textarea id="inv-notes" rows="2" class="w-full mt-1" placeholder="Supplier info, storage notes..."></textarea>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="saveInventoryItem()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg">Save Item</button>
+          <button onclick="closeInventoryModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT MODAL -->
+  <div id="receiptModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white">📄 Upload Receipt</h2>
+        <button onclick="closeReceiptModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Supplier / Vendor</label>
+          <input type="text" id="receipt-supplier" class="w-full mt-1" placeholder="e.g. Sysco Foods, RestaurantDepot" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Date</label>
+            <input type="date" id="receipt-date" class="w-full mt-1" />
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Total ($)</label>
+            <input type="number" id="receipt-total" class="w-full mt-1" placeholder="0.00" step="0.01" min="0" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Items (one per line)</label>
+          <textarea id="receipt-items" rows="4" class="w-full mt-1" placeholder="Chicken Breast x5 cases&#10;Jerk Seasoning x3 jars&#10;Plantains x2 cases"></textarea>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Receipt Image (optional)</label>
+          <input type="file" id="receipt-file" class="w-full mt-1 text-sm text-gray-400" accept="image/*" />
+          <div id="receipt-preview" class="mt-2 hidden">
+            <img id="receipt-img-preview" class="h-32 object-contain rounded-lg border border-white/10" />
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="saveReceipt()" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-lg">Save Receipt</button>
+          <button onclick="closeReceiptModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const API = window.location.origin;
+    // ─── State ───────────────────────────────────────────────────────────────────
     let state = { pos: null, dd: null, ue: null, gh: null, charts: {} };
+    let tasks = JSON.parse(localStorage.getItem('r_tasks') || '[]');
+    let inventory = JSON.parse(localStorage.getItem('r_inventory') || '[]');
+    let receipts = JSON.parse(localStorage.getItem('r_receipts') || '[]');
+    let editingTaskId = null;
+    let editingInvId = null;
+    let currentTaskFilter = 'all';
+
     const dateFilter = document.getElementById('dateFilter');
 
+    // ─── Mock Data Engine (seeded deterministic random) ─────────────────────────
+    function seededRand(seed, n) {
+      return ((seed * 9301 + 49297) % 233280) / 233280 * n;
+    }
+    function dateSeed(str) {
+      return str.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
+    }
+
+    function generateMockData(source, dateStr) {
+      const seed = dateSeed(dateStr);
+      const configs = {
+        doordash:  { avgTicket: 28, ordersPerDay: 45 },
+        ubereats:  { avgTicket: 32, ordersPerDay: 38 },
+        grubhub:   { avgTicket: 25, ordersPerDay: 22 },
+        toast_pos: { avgTicket: 38, ordersPerDay: 28 }
+      };
+      const cfg = configs[source];
+      if (!cfg) return { source, date: dateStr, orders: [], summary: { totalOrders: 0, totalRevenue: 0, avgOrderValue: 0 } };
+      const totalOrders = Math.floor(seededRand(seed + 1, cfg.ordersPerDay));
+      const totalRevenue = parseFloat((totalOrders * cfg.avgTicket * (0.9 + seededRand(seed + 2, 0.2))).toFixed(2));
+      const avgOrderValue = totalOrders > 0 ? parseFloat((totalRevenue / totalOrders).toFixed(2)) : 0;
+      const statuses = ['COMPLETED','COMPLETED','COMPLETED','ACCEPTED','PREPARING'];
+      const orders = [];
+      for (let i = 0; i < totalOrders; i++) {
+        const hour = 10 + Math.floor(seededRand(seed + i * 7 + 100, 14));
+        const minute = Math.floor(seededRand(seed + i * 13 + 200, 60));
+        orders.push({
+          orderId: `${source === 'toast_pos' ? 'POS' : source.toUpperCase().slice(0,2)}-ORD-${dateStr}-${i+100}`,
+          placedAt: `${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}`,
+          status: statuses[Math.floor(seededRand(seed + i * 17 + 300, statuses.length))],
+          items: Math.floor(seededRand(seed + i * 19 + 400, 5)) + 1,
+          subtotal: parseFloat((seededRand(seed + i * 23 + 500, cfg.avgTicket * 0.8) + cfg.avgTicket * 0.2).toFixed(2)),
+          total: parseFloat((seededRand(seed + i * 29 + 600, cfg.avgTicket) + cfg.avgTicket * 0.5).toFixed(2))
+        });
+      }
+      return { source, date: dateStr, orders, summary: { totalOrders, totalRevenue, avgOrderValue } };
+    }
+
+    // ─── Utilities ───────────────────────────────────────────────────────────────
     function fmt(n) { return '$' + (n || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+    function df(dateStr) {
+      if (!dateStr) return '--';
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    }
 
     function clock() {
       const el = document.getElementById('clock');
@@ -438,50 +746,61 @@
     }
 
     function statusBadge(s) {
-      const map = {COMPLETED:'bg-green-500/15 text-green-400',ACCEPTED:'bg-blue-500/15 text-blue-400',PREPARING:'bg-yellow-500/15 text-yellow-400',PENDING:'bg-gray-500/15 text-gray-400'};
+      const map = {
+        COMPLETED:'bg-green-500/15 text-green-400',
+        ACCEPTED:'bg-blue-500/15 text-blue-400',
+        PREPARING:'bg-yellow-500/15 text-yellow-400',
+        PENDING:'bg-gray-500/15 text-gray-400'
+      };
       return `<span class="text-xs px-2 py-0.5 rounded-full font-bold ${map[s]||map.PENDING}">${s||'PENDING'}</span>`;
     }
 
-    async function api(path) {
-      try {
-        const r = await fetch(API + path);
-        if (!r.ok) throw new Error(r.statusText);
-        return await r.json();
-      } catch(e) { return {error: e.message}; }
+    // ─── Data Fetch (mock) ────────────────────────────────────────────────────────
+    function getDateStr(isToday) {
+      const d = new Date();
+      if (!isToday) { d.setDate(d.getDate() - 1); }
+      return d.toISOString().split('T')[0].replace(/-/g, '');
     }
 
     async function fetchAll() {
       const isToday = dateFilter.value === 'today';
-      const suffix = isToday ? '/today' : '/yesterday';
+      const dateStr = getDateStr(isToday);
 
       document.getElementById('refreshIcon').style.animation = 'spin 0.5s linear infinite';
 
-      const [summary, pos, dd, ue, gh] = await Promise.all([
-        api('/api/stats/summary'),
-        api('/api/pos' + suffix),
-        api('/api/doordash' + suffix),
-        api('/api/ubereats' + suffix),
-        api('/api/grubhub' + suffix)
-      ]);
+      // Generate mock data locally (deterministic per date)
+      const pos = generateMockData('toast_pos', dateStr);
+      const dd  = generateMockData('doordash', dateStr);
+      const ue  = generateMockData('ubereats', dateStr);
+      const gh  = generateMockData('grubhub', dateStr);
 
       state.pos = pos; state.dd = dd; state.ue = ue; state.gh = gh;
 
-      if (!summary.error) {
-        const s = summary;
-        document.getElementById('kpi-pos-revenue').textContent = fmt(s.pos?.totalRevenue);
-        document.getElementById('kpi-pos-orders').textContent = (s.pos?.totalOrders||0) + ' orders';
-        document.getElementById('kpi-dd-revenue').textContent = fmt(s.doordash?.totalRevenue);
-        document.getElementById('kpi-dd-orders').textContent = (s.doordash?.totalOrders||0) + ' orders';
-        document.getElementById('kpi-ue-revenue').textContent = fmt(s.ubereats?.totalRevenue);
-        document.getElementById('kpi-ue-orders').textContent = (s.ubereats?.totalOrders||0) + ' orders';
-        document.getElementById('kpi-gh-revenue').textContent = fmt(s.grubhub?.totalRevenue);
-        document.getElementById('kpi-gh-orders').textContent = (s.grubhub?.totalOrders||0) + ' orders';
-        document.getElementById('kpi-combined-revenue').textContent = fmt(s.combined?.totalRevenue);
-        document.getElementById('kpi-combined-orders').textContent = s.combined?.totalOrders || 0;
-        document.getElementById('kpi-avg-order').textContent = fmt(s.combined?.avgOrderValue);
-      }
+      // Combined summary
+      const s = {
+        pos: pos.summary, doordash: dd.summary, ubereats: ue.summary, grubhub: gh.summary,
+        combined: {
+          totalRevenue: pos.summary.totalRevenue + dd.summary.totalRevenue + ue.summary.totalRevenue + gh.summary.totalRevenue,
+          totalOrders: pos.summary.totalOrders + dd.summary.totalOrders + ue.summary.totalOrders + gh.summary.totalOrders,
+          avgOrderValue: 0
+        }
+      };
+      s.combined.avgOrderValue = s.combined.totalOrders > 0
+        ? parseFloat((s.combined.totalRevenue / s.combined.totalOrders).toFixed(2)) : 0;
 
-      updateCharts(dd.summary||{}, ue.summary||{}, gh.summary||{}, pos.summary||{});
+      document.getElementById('kpi-pos-revenue').textContent = fmt(s.pos.totalRevenue);
+      document.getElementById('kpi-pos-orders').textContent = s.pos.totalOrders + ' orders';
+      document.getElementById('kpi-dd-revenue').textContent = fmt(s.doordash.totalRevenue);
+      document.getElementById('kpi-dd-orders').textContent = s.doordash.totalOrders + ' orders';
+      document.getElementById('kpi-ue-revenue').textContent = fmt(s.ubereats.totalRevenue);
+      document.getElementById('kpi-ue-orders').textContent = s.ubereats.totalOrders + ' orders';
+      document.getElementById('kpi-gh-revenue').textContent = fmt(s.grubhub.totalRevenue);
+      document.getElementById('kpi-gh-orders').textContent = s.grubhub.totalOrders + ' orders';
+      document.getElementById('kpi-combined-revenue').textContent = fmt(s.combined.totalRevenue);
+      document.getElementById('kpi-combined-orders').textContent = s.combined.totalOrders;
+      document.getElementById('kpi-avg-order').textContent = fmt(s.combined.avgOrderValue);
+
+      updateCharts(dd.summary, ue.summary, gh.summary, pos.summary);
       updatePlatformDetails(dd, ue, gh, pos);
 
       document.getElementById('refreshIcon').style.animation = '';
@@ -562,40 +881,40 @@
     async function fetchOrders() {
       const plat = document.getElementById('ordersPlatform').value;
       const date = document.getElementById('ordersDateFilter').value;
-      const suffix = date === 'today' ? '/today' : '/yesterday';
+      const dateStr = getDateStr(date === 'today');
 
-      let data;
+      let data = [];
       if (plat === 'all') {
-        const [pos, dd, ue, gh] = await Promise.all([
-          api('/api/pos' + suffix), api('/api/doordash' + suffix),
-          api('/api/ubereats' + suffix), api('/api/grubhub' + suffix)
-        ]);
-        const all = [
-          ...(pos.orders||[]).map(o=>({...o, _source:'toast_pos', _id:o.guid||o.orderId})),
-          ...(dd.orders||[]).map(o=>({...o, _source:'doordash', _id:o.orderId})),
-          ...(ue.orders||[]).map(o=>({...o, _source:'ubereats', _id:o.orderId})),
-          ...(gh.orders||[]).map(o=>({...o, _source:'grubhub', _id:o.orderId}))
+        const pos = generateMockData('toast_pos', dateStr);
+        const dd  = generateMockData('doordash', dateStr);
+        const ue  = generateMockData('ubereats', dateStr);
+        const gh  = generateMockData('grubhub', dateStr);
+        data = [
+          ...pos.orders.map(o => ({...o, _source:'toast_pos', _id:o.orderId})),
+          ...dd.orders.map(o => ({...o, _source:'doordash', _id:o.orderId})),
+          ...ue.orders.map(o => ({...o, _source:'ubereats', _id:o.orderId})),
+          ...gh.orders.map(o => ({...o, _source:'grubhub', _id:o.orderId}))
         ];
-        data = all;
       } else {
-        const d = await api('/api/' + plat + suffix);
-        data = (d.orders||[]).map(o=>({...o, _source:plat, _id:o.orderId||o.guid}));
+        const d = generateMockData(plat, dateStr);
+        data = d.orders.map(o => ({...o, _source:plat, _id:o.orderId}));
       }
 
       const tbody = document.getElementById('ordersTable');
       if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found</td></tr>'; return; }
       tbody.innerHTML = data.slice(0,100).map(o => `
         <tr class="order-row transition-colors cursor-pointer">
-          <td class="p-4 text-white font-mono text-xs">${o._id?.slice(0,20)||'--'}</td>
+          <td class="p-4 text-white font-mono text-xs">${(o._id||'--').slice(0,20)}</td>
           <td class="p-4">${badge(o._source)}</td>
-          <td class="p-4 text-gray-400 text-xs">${o.placedAt||o.createdAt||'--'}</td>
+          <td class="p-4 text-gray-400 text-xs">${o.placedAt||'--'}</td>
           <td class="p-4">${statusBadge(o.status)}</td>
-          <td class="p-4 text-right font-bold text-white">${fmt(o.total||o.totalAmount)}</td>
+          <td class="p-4 text-right font-bold text-white">${fmt(o.total)}</td>
         </tr>`).join('');
     }
 
+    // ─── Navigation ──────────────────────────────────────────────────────────────
     function showSection(name) {
-      ['dashboard','orders','doordash','ubereats','grubhub','pos','marketing'].forEach(s => {
+      ['dashboard','orders','doordash','ubereats','grubhub','pos','tasks','inventory','marketing'].forEach(s => {
         document.getElementById('section-'+s)?.classList.add('hidden');
         document.getElementById('nav-'+s)?.classList.remove('active');
       });
@@ -607,6 +926,8 @@
       if (name === 'grubhub') loadPlatformSection('grubhub', state.gh, ['gh-revenue','gh-orders','gh-avg'], 'gh-orders-list');
       if (name === 'pos') loadPlatformSection('pos', state.pos, ['pos-revenue','pos-orders','pos-avg'], 'pos-orders-list');
       if (name === 'orders') fetchOrders();
+      if (name === 'tasks') renderTasks();
+      if (name === 'inventory') renderInventory();
     }
 
     function loadPlatformSection(key, data, ids, listId) {
@@ -622,13 +943,307 @@
       list.innerHTML = orders.map(o => `
         <div class="flex items-center justify-between py-2 border-b border-white/5 text-sm">
           <div>
-            <div class="text-white font-mono text-xs">${o.orderId||o.guid||'--'}</div>
-            <div class="text-gray-500 text-xs">${o.placedAt||o.createdAt||'--'}</div>
+            <div class="text-white font-mono text-xs">${o.orderId||'--'}</div>
+            <div class="text-gray-500 text-xs">${o.placedAt||'--'}</div>
           </div>
-          <div class="text-right">${statusBadge(o.status)}<div class="text-white font-bold mt-1">${fmt(o.total||o.totalAmount)}</div></div>
+          <div class="text-right">${statusBadge(o.status)}<div class="text-white font-bold mt-1">${fmt(o.total)}</div></div>
         </div>`).join('');
     }
 
+    // ─── Task Management ─────────────────────────────────────────────────────────
+    function openTaskModal() {
+      editingTaskId = null;
+      document.getElementById('taskModalTitle').textContent = 'Add Task';
+      document.getElementById('task-title').value = '';
+      document.getElementById('task-priority').value = 'medium';
+      document.getElementById('task-due').value = '';
+      document.getElementById('task-desc').value = '';
+      document.getElementById('taskModal').classList.remove('hidden');
+    }
+
+    function editTask(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      editingTaskId = id;
+      document.getElementById('taskModalTitle').textContent = 'Edit Task';
+      document.getElementById('task-title').value = t.title;
+      document.getElementById('task-priority').value = t.priority;
+      document.getElementById('task-due').value = t.due || '';
+      document.getElementById('task-desc').value = t.desc || '';
+      document.getElementById('taskModal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('taskModal').classList.add('hidden');
+      editingTaskId = null;
+    }
+
+    function saveTask() {
+      const title = document.getElementById('task-title').value.trim();
+      if (!title) { alert('Task title is required'); return; }
+      const priority = document.getElementById('task-priority').value;
+      const due = document.getElementById('task-due').value;
+      const desc = document.getElementById('task-desc').value.trim();
+
+      if (editingTaskId) {
+        const t = tasks.find(x => x.id === editingTaskId);
+        if (t) { t.title = title; t.priority = priority; t.due = due; t.desc = desc; }
+      } else {
+        tasks.push({ id: uid(), title, priority, due, desc, completed: false, createdAt: new Date().toISOString() });
+      }
+      localStorage.setItem('r_tasks', JSON.stringify(tasks));
+      closeTaskModal();
+      renderTasks();
+    }
+
+    function toggleTask(id) {
+      const t = tasks.find(x => x.id === id);
+      if (t) { t.completed = !t.completed; localStorage.setItem('r_tasks', JSON.stringify(tasks)); renderTasks(); }
+    }
+
+    function deleteTask(id) {
+      if (!confirm('Delete this task?')) return;
+      tasks = tasks.filter(x => x.id !== id);
+      localStorage.setItem('r_tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function filterTasks(filter) {
+      currentTaskFilter = filter;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + filter)?.classList.add('active');
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const filtered = tasks.filter(t => {
+        if (currentTaskFilter === 'pending') return !t.completed;
+        if (currentTaskFilter === 'completed') return t.completed;
+        if (currentTaskFilter === 'high') return t.priority === 'high' && !t.completed;
+        return true;
+      });
+
+      const total = tasks.length;
+      const done = tasks.filter(t => t.completed).length;
+      const pending = total - done;
+      document.getElementById('task-total').textContent = total;
+      document.getElementById('task-done').textContent = done;
+      document.getElementById('task-pending').textContent = pending;
+
+      const el = document.getElementById('taskList');
+      if (!filtered.length) {
+        el.innerHTML = '<div class="text-center text-gray-500 py-8"><div class="text-3xl mb-2">📋</div><div>No tasks found</div></div>';
+        return;
+      }
+      const prioColor = { high:'text-red-400', medium:'text-yellow-400', low:'text-green-400' };
+      const prioIcon  = { high:'🔴', medium:'🟡', low:'🟢' };
+      el.innerHTML = filtered.map(t => `
+        <div class="flex items-center gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/8 transition-colors">
+          <input type="checkbox" class="todo-check w-5 h-5 accent-green" ${t.completed?'checked':''} onchange="toggleTask('${t.id}')" />
+          <div class="flex-1">
+            <div class="text-white font-medium ${t.completed?'line-through opacity-50':''}">${t.title}</div>
+            <div class="text-xs text-gray-500 mt-1">
+              ${prioIcon[t.priority]} <span class="${prioColor[t.priority]}">${t.priority}</span>
+              ${t.due ? '&nbsp;·&nbsp;Due: ' + df(t.due) : ''}
+              ${t.desc ? '&nbsp;·&nbsp;' + t.desc.slice(0,40) : ''}
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editTask('${t.id}')" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Edit</button>
+            <button onclick="deleteTask('${t.id}')" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1 rounded-lg">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+
+    // ─── Inventory Management ────────────────────────────────────────────────────
+    function openInventoryModal(id) {
+      editingInvId = id || null;
+      document.getElementById('invModalTitle').textContent = id ? 'Edit Inventory Item' : 'Add Inventory Item';
+      if (id) {
+        const item = inventory.find(x => x.id === id);
+        if (item) {
+          document.getElementById('inv-name').value = item.name;
+          document.getElementById('inv-cat').value = item.category;
+          document.getElementById('inv-unit').value = item.unit;
+          document.getElementById('inv-qty').value = item.qty;
+          document.getElementById('inv-min').value = item.minQty;
+          document.getElementById('inv-notes').value = item.notes || '';
+        }
+      } else {
+        ['inv-name','inv-unit','inv-notes'].forEach(id => document.getElementById(id).value = '');
+        ['inv-cat'].forEach(id => document.getElementById(id).value = 'produce');
+        ['inv-qty','inv-min'].forEach(id => document.getElementById(id).value = '');
+      }
+      document.getElementById('inventoryModal').classList.remove('hidden');
+    }
+
+    function closeInventoryModal() {
+      document.getElementById('inventoryModal').classList.add('hidden');
+      editingInvId = null;
+    }
+
+    function saveInventoryItem() {
+      const name = document.getElementById('inv-name').value.trim();
+      const category = document.getElementById('inv-cat').value;
+      const unit = document.getElementById('inv-unit').value.trim() || 'units';
+      const qty = parseFloat(document.getElementById('inv-qty').value) || 0;
+      const minQty = parseFloat(document.getElementById('inv-min').value) || 0;
+      const notes = document.getElementById('inv-notes').value.trim();
+      if (!name) { alert('Item name is required'); return; }
+
+      if (editingInvId) {
+        const item = inventory.find(x => x.id === editingInvId);
+        if (item) { Object.assign(item, { name, category, unit, qty, minQty, notes }); }
+      } else {
+        inventory.push({ id: uid(), name, category, unit, qty, minQty, notes, createdAt: new Date().toISOString(), lastRestocked: null });
+      }
+      localStorage.setItem('r_inventory', JSON.stringify(inventory));
+      closeInventoryModal();
+      renderInventory();
+    }
+
+    function deleteInventoryItem(id) {
+      if (!confirm('Delete this item?')) return;
+      inventory = inventory.filter(x => x.id !== id);
+      localStorage.setItem('r_inventory', JSON.stringify(inventory));
+      renderInventory();
+    }
+
+    function restockItem(id) {
+      const item = inventory.find(x => x.id === id);
+      if (!item) return;
+      const qty = prompt(`Current qty for "${item.name}": ${item.qty} ${item.unit}\n\nEnter new quantity:`, item.qty);
+      if (qty === null) return;
+      const newQty = parseFloat(qty);
+      if (isNaN(newQty) || newQty < 0) { alert('Invalid quantity'); return; }
+      item.qty = newQty;
+      item.lastRestocked = new Date().toISOString().split('T')[0];
+      localStorage.setItem('r_inventory', JSON.stringify(inventory));
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const search = document.getElementById('inv-search')?.value.toLowerCase() || '';
+      const catFilter = document.getElementById('inv-category-filter')?.value || 'all';
+      const stockFilter = document.getElementById('inv-stock-filter')?.value || 'all';
+
+      const filtered = inventory.filter(item => {
+        const matchSearch = item.name.toLowerCase().includes(search);
+        const matchCat = catFilter === 'all' || item.category === catFilter;
+        const isLow = item.qty <= item.minQty;
+        const matchStock = stockFilter === 'all' || (stockFilter === 'low' && isLow) || (stockFilter === 'ok' && !isLow);
+        return matchSearch && matchCat && matchStock;
+      });
+
+      const total = inventory.length;
+      const low = inventory.filter(i => i.qty <= i.minQty).length;
+      const ok = total - low;
+      document.getElementById('inv-total').textContent = total;
+      document.getElementById('inv-ok').textContent = ok;
+      document.getElementById('inv-low').textContent = low;
+
+      const catLabel = { produce:'Produce', meat:'Meat & Protein', dry:'Dry Goods', beverages:'Beverages', supplies:'Supplies' };
+      const tbody = document.getElementById('inventoryTable');
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="p-8 text-center text-gray-500">No items found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(item => {
+        const isLow = item.qty <= item.minQty;
+        const statusBadge = isLow
+          ? '<span class="badge badge-low">Low Stock</span>'
+          : '<span class="badge badge-ok">In Stock</span>';
+        const receiptThumb = item.receiptId
+          ? (() => { const r = receipts.find(r => r.id === item.receiptId); return r && r.image ? `<img src="${r.image}" class="receipt-thumb" onclick="viewReceiptImage('${r.id}')" title="View receipt" />` : '<span class="text-xs text-gray-500">📄</span>'; })()
+          : '<span class="text-xs text-gray-600">—</span>';
+        return `
+        <tr class="order-row transition-colors">
+          <td class="p-4 text-white font-medium">${item.name}</td>
+          <td class="p-4 text-gray-400 text-xs">${catLabel[item.category] || item.category}</td>
+          <td class="p-4 text-right font-bold ${isLow?'text-red-400':'text-white'}">${item.qty}</td>
+          <td class="p-4 text-right text-gray-400">${item.minQty}</td>
+          <td class="p-4 text-gray-400 text-xs">${item.unit}</td>
+          <td class="p-4">${statusBadge}</td>
+          <td class="p-4 text-gray-400 text-xs">${item.lastRestocked ? df(item.lastRestocked) : 'Never'}</td>
+          <td class="p-4">${receiptThumb}</td>
+          <td class="p-4 text-right">
+            <button onclick="restockItem('${item.id}')" class="text-xs bg-green-500/20 hover:bg-green-500/40 text-green-400 px-2 py-1 rounded-lg mr-1">+ Stock</button>
+            <button onclick="openInventoryModal('${item.id}')" class="text-xs bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded-lg mr-1">Edit</button>
+            <button onclick="deleteInventoryItem('${item.id}')" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-400 px-2 py-1 rounded-lg">Del</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+      // Render receipt history
+      const receiptList = document.getElementById('receiptList');
+      if (!receipts.length) {
+        receiptList.innerHTML = '<div class="text-center text-gray-500 py-6"><div class="text-3xl mb-2">📄</div><div>No receipts uploaded yet</div></div>';
+      } else {
+        receiptList.innerHTML = receipts.slice().reverse().slice(0,10).map(r => `
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <div class="flex items-center gap-3">
+              ${r.image ? `<img src="${r.image}" class="w-10 h-10 object-cover rounded-lg cursor-pointer" onclick="viewReceiptImage('${r.id}')" />` : '<div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-lg">📄</div>'}
+              <div>
+                <div class="text-white font-medium text-sm">${r.supplier || 'Unknown Supplier'}</div>
+                <div class="text-xs text-gray-500">${df(r.date)} · ${r.items ? r.items.split('\n').length : 0} items</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-white font-bold">${fmt(r.total)}</div>
+              <button onclick="viewReceiptImage('${r.id}')" class="text-xs text-blue-400 hover:text-blue-300">View</button>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    // ─── Receipt Upload ─────────────────────────────────────────────────────────
+    function openReceiptModal() {
+      ['receipt-supplier','receipt-date','receipt-total','receipt-items'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('receipt-preview').classList.add('hidden');
+      document.getElementById('receipt-file').value = '';
+      document.getElementById('receiptModal').classList.remove('hidden');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receiptModal').classList.add('hidden');
+    }
+
+    document.getElementById('receipt-file')?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('receipt-img-preview').src = ev.target.result;
+        document.getElementById('receipt-preview').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function saveReceipt() {
+      const supplier = document.getElementById('receipt-supplier').value.trim();
+      const date = document.getElementById('receipt-date').value;
+      const total = parseFloat(document.getElementById('receipt-total').value) || 0;
+      const items = document.getElementById('receipt-items').value.trim();
+      const fileInput = document.getElementById('receipt-file');
+      const image = fileInput.files[0] ? document.getElementById('receipt-img-preview').src : null;
+
+      if (!supplier && !total && !items) { alert('Please fill in at least one field'); return; }
+
+      const receipt = { id: uid(), supplier, date, total, items, image, createdAt: new Date().toISOString() };
+      receipts.push(receipt);
+      localStorage.setItem('r_receipts', JSON.stringify(receipts));
+      closeReceiptModal();
+      renderInventory();
+    }
+
+    function viewReceiptImage(id) {
+      const r = receipts.find(x => x.id === id);
+      if (!r || !r.image) { alert('No image attached to this receipt'); return; }
+      const win = window.open('', '_blank');
+      win.document.write(`<html><body style="background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0"><img src="${r.image}" style="max-width:90%;max-height:90vh;border-radius:8px"/></body></html>`);
+    }
+
+    // ─── Marketing ──────────────────────────────────────────────────────────────
     function insertPromotion(type) {
       const msgs = {
         LUNCH_SPECIAL: "🍱 LUNCH SPECIAL! 10% off all orders 11am-2pm. Call (908) 686-8178 to order ahead!",
@@ -644,19 +1259,19 @@
       const type = document.getElementById('campaignType')?.value;
       const msg = document.getElementById('campaignMsg')?.value;
       if (!msg) { alert('Write a message first!'); return; }
-      // In production: integrate with SMS/email/ social APIs
       const output = document.getElementById('scheduledCampaigns');
       if (output) {
         output.innerHTML = `<div class="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
           <span class="text-lg">✅</span>
-          <div><div class="font-bold">Campaign Queued!</div><div class="text-gray-400 text-xs">${msg.slice(0,60)}...</div></div>
+          <div><div class="font-bold">Campaign Queued (${type.toUpperCase()})!</div><div class="text-gray-400 text-xs">${msg.slice(0,60)}...</div></div>
         </div>` + (output.innerHTML || '');
       }
       document.getElementById('campaignMsg').value = '';
     }
 
+    // ─── Boot ───────────────────────────────────────────────────────────────────
     fetchAll();
-    setInterval(fetchAll, 60000); // Auto-refresh every minute
+    setInterval(fetchAll, 60000);
   </script>
 </body>
 </html>
