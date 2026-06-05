@@ -19,3 +19,5 @@ services:
       - key: DATABASE_URL
         value: ""
         sync: false
+      - key: RESTAURANT_NAME
+        value: "Top Taste Jamaican Restaurant"

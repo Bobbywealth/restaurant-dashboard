@@ -33,6 +33,7 @@ const TOAST_API_BASE = 'https://ws-api.toasttab.com';
 const TOAST_AUTH_URL = `${TOAST_API_BASE}/authentication/v1/authentication/login`;
 const TOAST_ORDERS_URL = `${TOAST_API_BASE}/orders/v1/orders`;
 const RESTAURANT_GUID = '8d0d8d7b-1fcc-43fd-8be5-1413efbaaef7';
+const RESTAURANT_NAME = process.env.RESTAURANT_NAME || 'Top Taste Jamaican Restaurant';
 
 let toastToken = null;
 let tokenExpiry = 0;
@@ -406,13 +407,23 @@ app.get('/api/staff/labor', async (req, res) => {
 // SETTINGS API
 // ═══════════════════════════════════════════════════════════════════════════
 app.get('/api/settings', async (req, res) => {
-  if (!pool) return res.json({});
+  // Defaults from env vars — restaurant_name is always available
+  const defaults = {
+    restaurant_name: RESTAURANT_NAME,
+    restaurant_phone: process.env.RESTAURANT_PHONE || '',
+    tax_rate: 0.06625,
+    doordash_commission: 0.30,
+    ubereats_commission: 0.30,
+    grubhub_commission: 0.275,
+    toast_client_id: process.env.TOAST_CLIENT_ID || '',
+  };
+  if (!pool) return res.json(defaults);
   try {
     const r = await dbQuery('SELECT * FROM settings');
-    const out = {};
+    const out = { ...defaults };
     r.rows.forEach(row => { out[row.key] = row.value; });
     res.json(out);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) { res.json(defaults); }
 });
 
 app.put('/api/settings/:key', async (req, res) => {
