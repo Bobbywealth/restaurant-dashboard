@@ -70,43 +70,34 @@
       <button onclick="showSection('dashboard')" class="nav-btn active w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-dashboard">
         <span class="text-lg">📊</span> Dashboard
       </button>
-      <button onclick="showSection('orders')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-orders">
+      <button onclick="showSection('orders')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-orders">
         <span class="text-lg">🧾</span> Orders
       </button>
-      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Platforms</div>
-      <button onclick="showSection('doordash')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-doordash">
-        <span class="text-lg">🚴</span> DoorDash
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Finance</div>
+      <button onclick="showSection('expenses')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-expenses">
+        <span class="text-lg">💸</span> Expenses
       </button>
-      <button onclick="showSection('ubereats')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-ubereats">
-        <span class="text-lg">⚡</span> Uber Eats
-      </button>
-      <button onclick="showSection('grubhub')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-grubhub">
-        <span class="text-lg">🍔</span> Grubhub
-      </button>
-      <button onclick="showSection('pos')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-pos">
-        <span class="text-lg">💳</span> Toast POS
-      </button>
-      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Management</div>
-      <button onclick="showSection('tasks')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-tasks">
-        <span class="text-lg">✅</span> Tasks
-      </button>
-      <button onclick="showSection('inventory')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-inventory">
-        <span class="text-lg">📦</span> Inventory
-      </button>
-      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tools</div>
-      <button onclick="showSection('marketing')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-marketing">
-        <span class="text-lg">📣</span> Marketing
-      </button>
-      <button onclick="showSection('menu')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-menu">
-        <span class="text-lg">🍽️</span> Menu
-      </button>
-      <button onclick="showSection('staff')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-staff">
-        <span class="text-lg">👥</span> Staff
-      </button>
-      <button onclick="showSection('reports')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-reports">
+      <button onclick="showSection('reports')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-reports">
         <span class="text-lg">📈</span> Reports
       </button>
-      <button onclick="showSection('settings')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-settings">
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Operations</div>
+      <button onclick="showSection('inventory')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-inventory">
+        <span class="text-lg">📦</span> Inventory
+      </button>
+      <button onclick="showSection('menu')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-menu">
+        <span class="text-lg">🍽️</span> Menu
+      </button>
+      <button onclick="showSection('staff')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-staff">
+        <span class="text-lg">👥</span> Staff
+      </button>
+      <button onclick="showSection('tasks')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-tasks">
+        <span class="text-lg">✅</span> Tasks
+      </button>
+      <div class="px-4 mt-6 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Growth</div>
+      <button onclick="showSection('marketing')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-marketing">
+        <span class="text-lg">📣</span> Marketing
+      </button>
+      <button onclick="showSection('settings')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-settings">
         <span class="text-lg">⚙️</span> Settings
       </button>
     </nav>
@@ -141,84 +132,77 @@
 
       <!-- KPI Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="stat-card rounded-2xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">💰</span>
-            <span class="badge badge-pos">POS</span>
-          </div>
-          <div class="text-3xl font-black text-white" id="kpi-pos-revenue">--</div>
-          <div class="text-xs text-gray-600 mt-1">POS Revenue</div>
-          <div class="text-xs accent-green mt-1" id="kpi-pos-orders">-- orders</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">🚴</span>
-            <span class="badge badge-dd">DoorDash</span>
-          </div>
-          <div class="text-3xl font-black text-white" id="kpi-dd-revenue">--</div>
-          <div class="text-xs text-gray-600 mt-1">DoorDash Revenue</div>
-          <div class="text-xs accent-red mt-1" id="kpi-dd-orders">-- orders</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">⚡</span>
-            <span class="badge badge-ue">Uber Eats</span>
-          </div>
-          <div class="text-3xl font-black text-white" id="kpi-ue-revenue">--</div>
-          <div class="text-xs text-gray-600 mt-1">Uber Eats Revenue</div>
-          <div class="text-xs accent-blue mt-1" id="kpi-ue-orders">-- orders</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">🍔</span>
-            <span class="badge badge-gh">Grubhub</span>
-          </div>
-          <div class="text-3xl font-black text-white" id="kpi-gh-revenue">--</div>
-          <div class="text-xs text-gray-600 mt-1">Grubhub Revenue</div>
-          <div class="text-xs accent-yellow mt-1" id="kpi-gh-orders">-- orders</div>
-        </div>
-      </div>
-
-      <!-- Combined Stats -->
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Combined Revenue</div>
-          <div class="text-4xl font-black text-white mt-2" id="kpi-combined-revenue">--</div>
-          <div class="text-xs text-gray-500 mt-1">All channels</div>
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Revenue</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-revenue">$0</div>
+          <div class="text-xs text-gray-500 mt-1">Today</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Total Orders</div>
-          <div class="text-4xl font-black text-white mt-2" id="kpi-combined-orders">--</div>
-          <div class="text-xs text-gray-500 mt-1">All channels</div>
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Orders</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-orders">0</div>
+          <div class="text-xs text-gray-500 mt-1">Today</div>
         </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Avg Order Value</div>
-          <div class="text-4xl font-black text-white mt-2" id="kpi-avg-order">--</div>
-          <div class="text-xs text-gray-500 mt-1">All channels</div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-orange-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Expenses</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-expenses">$0</div>
+          <div class="text-xs text-gray-500 mt-1">This Week</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Net Profit</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-profit">$0</div>
+          <div class="text-xs text-gray-500 mt-1">Today</div>
         </div>
       </div>
 
-      <!-- Charts -->
+      <!-- Quick stats row -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-purple-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Inventory Items</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-inventory">--</div>
+          <div class="text-xs text-gray-500 mt-1">In stock</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Active Staff</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-staff">--</div>
+          <div class="text-xs text-gray-500 mt-1">Working today</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-teal-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Pending Tasks</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-tasks">--</div>
+          <div class="text-xs text-gray-500 mt-1">Open</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-pink-500">
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Marketing</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="kpi-marketing">--</div>
+          <div class="text-xs text-gray-500 mt-1">Campaigns sent</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="stat-card rounded-2xl p-5">
-          <div class="font-bold text-white mb-4">📈 Revenue by Platform</div>
+          <div class="font-bold text-[#1a1a1a] mb-4">📈 Revenue vs Expenses</div>
           <canvas id="revenueChart"></canvas>
         </div>
         <div class="stat-card rounded-2xl p-5">
-          <div class="font-bold text-white mb-4">🧁 Orders by Platform</div>
+          <div class="font-bold text-[#1a1a1a] mb-4">📊 Expense Breakdown</div>
           <canvas id="ordersChart"></canvas>
         </div>
       </div>
 
-      <!-- Platform Breakdown -->
+      <!-- Bottom row -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="stat-card rounded-2xl p-5">
-          <div class="font-bold text-white mb-4">📋 Platform Details</div>
-          <div class="space-y-3" id="platformDetails"></div>
+          <div class="font-bold text-[#1a1a1a] mb-4">📋 Recent Orders</div>
+          <div class="space-y-3" id="recentOrdersList">
+            <div class="text-center text-gray-400 py-6 text-sm">No orders yet</div>
+          </div>
         </div>
         <div class="stat-card rounded-2xl p-5">
-          <div class="font-bold text-white mb-4">🔄 Revenue Mix</div>
-          <canvas id="mixChart"></canvas>
+          <div class="font-bold text-[#1a1a1a] mb-4">⚠️ Low Stock Alerts</div>
+          <div class="space-y-3" id="lowStockAlerts">
+            <div class="text-center text-gray-400 py-6 text-sm">No alerts</div>
+          </div>
         </div>
       </div>
     </section>
@@ -254,98 +238,6 @@
           </thead>
           <tbody id="ordersTable" class="divide-y divide-gray-200"></tbody>
         </table>
-      </div>
-    </section>
-
-    <!-- DOORDASH -->
-    <section id="section-doordash" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-[#1a1a1a]">🚴 DoorDash</h1>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-600 font-bold">Revenue</div>
-          <div class="text-3xl font-black text-white mt-2" id="dd-revenue">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-600 font-bold">Orders</div>
-          <div class="text-3xl font-black text-white mt-2" id="dd-orders">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
-          <div class="text-3xl font-black text-white mt-2" id="dd-avg">--</div>
-        </div>
-      </div>
-      <div class="stat-card rounded-2xl p-5">
-        <div class="font-bold text-white mb-4">Recent DoorDash Orders</div>
-        <div class="space-y-2" id="dd-orders-list"></div>
-      </div>
-    </section>
-
-    <!-- UBEREATS -->
-    <section id="section-ubereats" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-[#1a1a1a]">⚡ Uber Eats</h1>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-600 font-bold">Revenue</div>
-          <div class="text-3xl font-black text-white mt-2" id="ue-revenue">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-600 font-bold">Orders</div>
-          <div class="text-3xl font-black text-white mt-2" id="ue-orders">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
-          <div class="text-3xl font-black text-white mt-2" id="ue-avg">--</div>
-        </div>
-      </div>
-      <div class="stat-card rounded-2xl p-5">
-        <div class="font-bold text-white mb-4">Recent Uber Eats Orders</div>
-        <div class="space-y-2" id="ue-orders-list"></div>
-      </div>
-    </section>
-
-    <!-- GRUBHUB -->
-    <section id="section-grubhub" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-[#1a1a1a]">🍔 Grubhub</h1>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-600 font-bold">Revenue</div>
-          <div class="text-3xl font-black text-white mt-2" id="gh-revenue">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-600 font-bold">Orders</div>
-          <div class="text-3xl font-black text-white mt-2" id="gh-orders">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
-          <div class="text-3xl font-black text-white mt-2" id="gh-avg">--</div>
-        </div>
-      </div>
-      <div class="stat-card rounded-2xl p-5">
-        <div class="font-bold text-white mb-4">Recent Grubhub Orders</div>
-        <div class="space-y-2" id="gh-orders-list"></div>
-      </div>
-    </section>
-
-    <!-- TOAST POS -->
-    <section id="section-pos" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-[#1a1a1a]">💳 Toast POS</h1>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-600 font-bold">Revenue</div>
-          <div class="text-3xl font-black text-white mt-2" id="pos-revenue">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-600 font-bold">Orders</div>
-          <div class="text-3xl font-black text-white mt-2" id="pos-orders">--</div>
-        </div>
-        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
-          <div class="text-3xl font-black text-white mt-2" id="pos-avg">--</div>
-        </div>
-      </div>
-      <div class="stat-card rounded-2xl p-5">
-        <div class="font-bold text-white mb-4">Recent POS Orders</div>
-        <div class="space-y-2" id="pos-orders-list"></div>
       </div>
     </section>
 
@@ -385,6 +277,78 @@
       <!-- Task List -->
       <div class="stat-card rounded-2xl p-5">
         <div class="space-y-3" id="taskList"></div>
+      </div>
+    </section>
+
+    <!-- EXPENSES -->
+    <section id="section-expenses" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-[#1a1a1a]">💸 Expenses</h1>
+        <button onclick="openExpenseModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+          + Add Expense
+        </button>
+      </div>
+
+      <!-- Expense Summary -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Total Expenses</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="exp-total">$0</div>
+          <div class="text-xs text-gray-500 mt-1">This Month</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Food Costs</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="exp-food">$0</div>
+          <div class="text-xs text-gray-500 mt-1">This Month</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-orange-500">
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Supplies</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="exp-supplies">$0</div>
+          <div class="text-xs text-gray-500 mt-1">This Month</div>
+        </div>
+        <div class="stat-card rounded-2xl p-5 border-l-4 border-purple-500">
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Utilities & Misc</div>
+          <div class="text-3xl font-black text-[#1a1a1a] mt-2" id="exp-utilities">$0</div>
+          <div class="text-xs text-gray-500 mt-1">This Month</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex gap-3 flex-wrap">
+        <select id="exp-category-filter" onchange="renderExpenses()" class="w-48">
+          <option value="all">All Categories</option>
+          <option value="food">Food Costs</option>
+          <option value="supplies">Supplies</option>
+          <option value="labor">Labor</option>
+          <option value="utilities">Utilities</option>
+          <option value="marketing">Marketing</option>
+          <option value="rent">Rent</option>
+          <option value="misc">Miscellaneous</option>
+        </select>
+        <select id="exp-month-filter" onchange="renderExpenses()" class="w-48">
+          <option value="this">This Month</option>
+          <option value="last">Last Month</option>
+          <option value="all">All Time</option>
+        </select>
+      </div>
+
+      <!-- Expense Table -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-[#e8e8e4] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-100">
+            <tr class="text-gray-600 text-xs uppercase tracking-wider">
+              <th class="text-left p-4 font-bold">Date</th>
+              <th class="text-left p-4 font-bold">Description</th>
+              <th class="text-left p-4 font-bold">Category</th>
+              <th class="text-left p-4 font-bold">Vendor</th>
+              <th class="text-right p-4 font-bold">Amount</th>
+              <th class="text-right p-4 font-bold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTable" class="divide-y divide-gray-200">
+            <tr><td colspan="6" class="p-8 text-center text-gray-400 text-sm">No expenses recorded. Click "+ Add Expense" to start.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -806,6 +770,52 @@
 
   </main>
 
+  <!-- EXPENSE MODAL -->
+  <div id="expenseModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-[#1a1a1a]" id="expModalTitle">Add Expense</h2>
+        <button onclick="closeExpenseModal()" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-600 font-bold uppercase">Description *</label>
+          <input type="text" id="exp-desc" class="w-full mt-1" placeholder="e.g. Fish market - weekly supply" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-600 font-bold uppercase">Amount ($) *</label>
+            <input type="number" id="exp-amount" class="w-full mt-1" placeholder="0.00" step="0.01" min="0" />
+          </div>
+          <div>
+            <label class="text-xs text-gray-600 font-bold uppercase">Date *</label>
+            <input type="date" id="exp-date" class="w-full mt-1" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-600 font-bold uppercase">Category</label>
+          <select id="exp-category" class="w-full mt-1">
+            <option value="food">Food Costs</option>
+            <option value="supplies">Supplies</option>
+            <option value="labor">Labor</option>
+            <option value="utilities">Utilities</option>
+            <option value="marketing">Marketing</option>
+            <option value="rent">Rent</option>
+            <option value="misc">Miscellaneous</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-600 font-bold uppercase">Vendor</label>
+          <input type="text" id="exp-vendor" class="w-full mt-1" placeholder="e.g. Sysco Foods" />
+        </div>
+        <div class="flex gap-3 mt-4">
+          <button onclick="closeExpenseModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 rounded-xl">Cancel</button>
+          <button onclick="saveExpense()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl">Save Expense</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TASK MODAL -->
   <div id="taskModal" class="modal-overlay hidden">
     <div class="modal-content">
@@ -1108,10 +1118,10 @@
 
   <script>
     // ─── State ───────────────────────────────────────────────────────────────────
-    let state = { pos: null, dd: null, ue: null, gh: null, charts: {} };
-    let tasks = JSON.parse(localStorage.getItem('r_tasks') || '[]');
+    let state = { pos: null, dd: null, ue: null, gh: null, charts: {}, expenses: JSON.parse(localStorage.getItem('r_expenses') || '[]'), inventory: [], orders: [], staff: [], campaigns: [] };
+    let tasks    = JSON.parse(localStorage.getItem('r_tasks') || '[]');
     let inventory = JSON.parse(localStorage.getItem('r_inventory') || '[]');
-    let receipts = JSON.parse(localStorage.getItem('r_receipts') || '[]');
+    let receipts  = JSON.parse(localStorage.getItem('r_receipts') || '[]');
     let editingTaskId = null;
     let editingInvId = null;
     let currentTaskFilter = 'all';
@@ -1203,121 +1213,117 @@
     async function fetchAll() {
       const isToday = dateFilter.value === 'today';
       const dateStr = getDateStr(isToday);
-
       document.getElementById('refreshIcon').style.animation = 'spin 0.5s linear infinite';
 
-      // Generate mock data locally (deterministic per date)
       const pos = generateMockData('toast_pos', dateStr);
       const dd  = generateMockData('doordash', dateStr);
       const ue  = generateMockData('ubereats', dateStr);
       const gh  = generateMockData('grubhub', dateStr);
-
       state.pos = pos; state.dd = dd; state.ue = ue; state.gh = gh;
 
-      // Combined summary
-      const s = {
-        pos: pos.summary, doordash: dd.summary, ubereats: ue.summary, grubhub: gh.summary,
-        combined: {
-          totalRevenue: pos.summary.totalRevenue + dd.summary.totalRevenue + ue.summary.totalRevenue + gh.summary.totalRevenue,
-          totalOrders: pos.summary.totalOrders + dd.summary.totalOrders + ue.summary.totalOrders + gh.summary.totalOrders,
-          avgOrderValue: 0
-        }
-      };
-      s.combined.avgOrderValue = s.combined.totalOrders > 0
-        ? parseFloat((s.combined.totalRevenue / s.combined.totalOrders).toFixed(2)) : 0;
+      const revenue = pos.summary.totalRevenue + dd.summary.totalRevenue + ue.summary.totalRevenue + gh.summary.totalRevenue;
+      const orders  = pos.summary.totalOrders + dd.summary.totalOrders + ue.summary.totalOrders + gh.summary.totalOrders;
+      const expenseBase = Math.round(revenue * 0.45);
+      const expenses = state.expenses.reduce((a,e) => a + (e.date === dateStr ? e.amount : 0), 0) || expenseBase;
+      const profit = revenue - expenses;
 
-      document.getElementById('kpi-pos-revenue').textContent = fmt(s.pos.totalRevenue);
-      document.getElementById('kpi-pos-orders').textContent = s.pos.totalOrders + ' orders';
-      document.getElementById('kpi-dd-revenue').textContent = fmt(s.doordash.totalRevenue);
-      document.getElementById('kpi-dd-orders').textContent = s.doordash.totalOrders + ' orders';
-      document.getElementById('kpi-ue-revenue').textContent = fmt(s.ubereats.totalRevenue);
-      document.getElementById('kpi-ue-orders').textContent = s.ubereats.totalOrders + ' orders';
-      document.getElementById('kpi-gh-revenue').textContent = fmt(s.grubhub.totalRevenue);
-      document.getElementById('kpi-gh-orders').textContent = s.grubhub.totalOrders + ' orders';
-      document.getElementById('kpi-combined-revenue').textContent = fmt(s.combined.totalRevenue);
-      document.getElementById('kpi-combined-orders').textContent = s.combined.totalOrders;
-      document.getElementById('kpi-avg-order').textContent = fmt(s.combined.avgOrderValue);
+      document.getElementById('kpi-revenue').textContent  = fmt(revenue);
+      document.getElementById('kpi-orders').textContent   = orders;
+      document.getElementById('kpi-expenses').textContent = fmt(expenses);
+      document.getElementById('kpi-profit').textContent  = fmt(profit);
+      document.getElementById('kpi-inventory').textContent = state.inventory.filter(i=>i.qty > i.min).length || '--';
+      document.getElementById('kpi-staff').textContent    = state.staff.length || '--';
+      document.getElementById('kpi-tasks').textContent    = (state.tasks.filter(t=>t.status!=='completed').length) || '--';
+      document.getElementById('kpi-marketing').textContent = state.campaigns.length || '--';
 
-      updateCharts(dd.summary, ue.summary, gh.summary, pos.summary);
-      updatePlatformDetails(dd, ue, gh, pos);
+      updateCharts(revenue, expenses);
+      updateRecentOrders();
+      updateLowStockAlerts();
 
       document.getElementById('refreshIcon').style.animation = '';
     }
 
-    function updateCharts(dd, ue, gh, pos) {
+    function updateCharts(revenue, expenses) {
       const revCtx = document.getElementById('revenueChart')?.getContext('2d');
       const ordCtx = document.getElementById('ordersChart')?.getContext('2d');
-      const mixCtx = document.getElementById('mixChart')?.getContext('2d');
       if (!revCtx) return;
 
       if (state.charts.revenue) state.charts.revenue.destroy();
       if (state.charts.orders) state.charts.orders.destroy();
-      if (state.charts.mix) state.charts.mix.destroy();
+
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const revData = days.map((_,i) => Math.round(revenue * (0.6 + Math.random()*0.8)));
+      const expData = days.map((_,i) => Math.round(expenses * (0.5 + Math.random()*0.6)));
 
       state.charts.revenue = new Chart(revCtx, {
         type: 'bar',
         data: {
-          labels: ['DoorDash','Uber Eats','Grubhub','POS'],
-          datasets: [{
-            label: 'Revenue',
-            data: [dd.totalRevenue||0, ue.totalRevenue||0, gh.totalRevenue||0, pos.totalRevenue||0],
-            backgroundColor: ['rgba(255,107,107,0.7)','rgba(51,138,255,0.7)','rgba(255,212,59,0.7)','rgba(81,207,102,0.7)'],
-            borderRadius: 8
-          }]
+          labels: days,
+          datasets: [
+            { label: 'Revenue', data: revData, backgroundColor: 'rgba(81,207,102,0.7)', borderRadius: 8 },
+            { label: 'Expenses', data: expData, backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 8 }
+          ]
         },
-        options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#888'}}, x:{grid:{display:false},ticks:{color:'#888'}}} }
+        options: { responsive:true, plugins:{legend:{display:true,labels:{color:'#666',boxWidth:12,padding:16}}}, scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#888'}}, x:{grid:{display:false},ticks:{color:'#888'}}} }
       });
+
+      const categories = ['Food','Supplies','Labor','Utilities','Marketing'];
+      const expBreakdown = categories.map(c => Math.round(expenses * (0.1 + Math.random()*0.3)));
 
       state.charts.orders = new Chart(ordCtx, {
         type: 'doughnut',
         data: {
-          labels: ['DoorDash','Uber Eats','Grubhub','POS'],
+          labels: categories,
           datasets: [{
-            data: [dd.totalOrders||0, ue.totalOrders||0, gh.totalOrders||0, pos.totalOrders||0],
-            backgroundColor: ['#ff6b6b','#339af0','#ffd43b','#51cf66'],
+            data: expBreakdown,
+            backgroundColor: ['#ff6b6b','#ffd43b','#339af0','#51cf66','#cc5de8'],
             borderWidth: 0
           }]
         },
-        options: { responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#888',padding:20}}}}
-      });
-
-      const total3p = (dd.totalRevenue||0)+(ue.totalRevenue||0)+(gh.totalRevenue||0);
-      const posRev = pos.totalRevenue||0;
-      state.charts.mix = new Chart(mixCtx, {
-        type: 'pie',
-        data: {
-          labels: ['DoorDash','Uber Eats','Grubhub','In-Store POS'],
-          datasets: [{
-            data: [dd.totalRevenue||0, ue.totalRevenue||0, gh.totalRevenue||0, posRev],
-            backgroundColor: ['#ff6b6b','#339af0','#ffd43b','#51cf66'],
-            borderWidth: 0
-          }]
-        },
-        options: { responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#888',padding:20}}}}
+        options: { responsive:true, plugins:{legend:{position:'bottom',labels:{color:'#666',padding:16}}}}
       });
     }
 
-    function updatePlatformDetails(dd, ue, gh, pos) {
-      const el = document.getElementById('platformDetails');
+    function updateRecentOrders() {
+      const el = document.getElementById('recentOrdersList');
       if (!el) return;
-      const platforms = [
-        {name:'🚴 DoorDash', data:dd, color:'text-red-400'},
-        {name:'⚡ Uber Eats', data:ue, color:'text-blue-400'},
-        {name:'🍔 Grubhub', data:gh, color:'text-yellow-400'},
-        {name:'💳 Toast POS', data:pos, color:'text-green-400'}
-      ];
-      el.innerHTML = platforms.map(p => `
-        <div class="flex items-center justify-between py-2 border-b border-white/5">
-          <span class="${p.color} font-bold text-sm">${p.name}</span>
+      const orders = (state.orders || []).slice(0, 8);
+      if (!orders.length) return;
+      el.innerHTML = orders.map(o => `
+        <div class="flex items-center justify-between py-2 border-b border-gray-100">
+          <div>
+            <div class="font-bold text-sm text-[#1a1a1a]">#${o.id}</div>
+            <div class="text-xs text-gray-500">${o.time || '—'}</div>
+          </div>
           <div class="text-right">
-            <span class="text-white font-bold">${fmt(p.data?.summary?.totalRevenue)}</span>
-            <span class="text-gray-500 text-xs ml-2">${p.data?.summary?.totalOrders||0} orders</span>
+            <div class="font-bold text-sm text-[#1a1a1a]">${fmt(o.total || 0)}</div>
+            <div class="text-xs text-gray-500">${o.customer || 'Guest'}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    function updateLowStockAlerts() {
+      const el = document.getElementById('lowStockAlerts');
+      if (!el) return;
+      const low = (state.inventory || []).filter(i => i.qty <= i.min);
+      if (!low.length) {
+        el.innerHTML = '<div class="text-center text-gray-400 py-6 text-sm">No alerts — inventory healthy ✓</div>';
+        return;
+      }
+      el.innerHTML = low.map(i => `
+        <div class="flex items-center justify-between py-2 border-b border-gray-100">
+          <div>
+            <div class="font-bold text-sm text-[#1a1a1a]">${i.name}</div>
+            <div class="text-xs text-red-500">${i.category}</div>
+          </div>
+          <div class="text-right">
+            <div class="font-bold text-sm text-red-500">${i.qty} / ${i.min} ${i.unit}</div>
+            <div class="text-xs text-gray-500">Min. Stock</div>
           </div>
         </div>`).join('');
     }
 
     async function fetchOrders() {
-      const plat = document.getElementById('ordersPlatform').value;
       const date = document.getElementById('ordersDateFilter').value;
       const dateStr = getDateStr(date === 'today');
 
@@ -1352,17 +1358,14 @@
 
     // ─── Navigation ──────────────────────────────────────────────────────────────
     function showSection(name) {
-      ['dashboard','orders','doordash','ubereats','grubhub','pos','tasks','inventory','marketing','menu','staff','reports','settings'].forEach(s => {
+      ['dashboard','orders','expenses','doordash','ubereats','grubhub','pos','tasks','inventory','marketing','menu','staff','reports','settings'].forEach(s => {
         document.getElementById('section-'+s)?.classList.add('hidden');
         document.getElementById('nav-'+s)?.classList.remove('active');
       });
       document.getElementById('section-'+name)?.classList.remove('hidden');
       document.getElementById('nav-'+name)?.classList.add('active');
 
-      if (name === 'doordash') loadPlatformSection('doordash', state.dd, ['dd-revenue','dd-orders','dd-avg'], 'dd-orders-list');
-      if (name === 'ubereats') loadPlatformSection('ubereats', state.ue, ['ue-revenue','ue-orders','ue-avg'], 'ue-orders-list');
-      if (name === 'grubhub') loadPlatformSection('grubhub', state.gh, ['gh-revenue','gh-orders','gh-avg'], 'gh-orders-list');
-      if (name === 'pos') loadPlatformSection('pos', state.pos, ['pos-revenue','pos-orders','pos-avg'], 'pos-orders-list');
+      if (name === 'expenses') { renderExpenses(); updateExpenseSummary(); }
       if (name === 'orders') fetchOrders();
       if (name === 'tasks') renderTasks();
       if (name === 'inventory') renderInventory();
@@ -1390,6 +1393,113 @@
           </div>
           <div class="text-right">${statusBadge(o.status)}<div class="text-white font-bold mt-1">${fmt(o.total)}</div></div>
         </div>`).join('');
+    }
+
+    // ─── Expense Management ───────────────────────────────────────────────────────
+    function openExpenseModal(id) {
+      editingTaskId = id;
+      if (id) {
+        const e = state.expenses.find(x => x.id === id);
+        if (e) {
+          document.getElementById('expModalTitle').textContent = 'Edit Expense';
+          document.getElementById('exp-desc').value = e.description || '';
+          document.getElementById('exp-amount').value = e.amount || '';
+          document.getElementById('exp-category').value = e.category || 'misc';
+          document.getElementById('exp-vendor').value = e.vendor || '';
+          document.getElementById('exp-date').value = e.date || '';
+        }
+      } else {
+        document.getElementById('expModalTitle').textContent = 'Add Expense';
+        document.getElementById('exp-desc').value = '';
+        document.getElementById('exp-amount').value = '';
+        document.getElementById('exp-category').value = 'misc';
+        document.getElementById('exp-vendor').value = '';
+        document.getElementById('exp-date').value = new Date().toISOString().slice(0,10);
+      }
+      document.getElementById('expenseModal').classList.remove('hidden');
+    }
+
+    function closeExpenseModal() {
+      document.getElementById('expenseModal').classList.add('hidden');
+    }
+
+    function saveExpense() {
+      const desc = document.getElementById('exp-desc').value.trim();
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+      const category = document.getElementById('exp-category').value;
+      const vendor = document.getElementById('exp-vendor').value.trim();
+      const date = document.getElementById('exp-date').value;
+      if (!desc || !amount || !date) { alert('Please fill in description, amount, and date.'); return; }
+      if (editingTaskId) {
+        const e = state.expenses.find(x => x.id === editingTaskId);
+        if (e) Object.assign(e, { description: desc, amount, category, vendor, date });
+      } else {
+        state.expenses.push({ id: Date.now(), description: desc, amount, category, vendor, date });
+      }
+      localStorage.setItem('r_expenses', JSON.stringify(state.expenses));
+      closeExpenseModal();
+      renderExpenses();
+      updateExpenseSummary();
+    }
+
+    function deleteExpense(id) {
+      state.expenses = state.expenses.filter(x => x.id !== id);
+      localStorage.setItem('r_expenses', JSON.stringify(state.expenses));
+      renderExpenses();
+      updateExpenseSummary();
+    }
+
+    function renderExpenses() {
+      const cat = document.getElementById('exp-category-filter')?.value || 'all';
+      const month = document.getElementById('exp-month-filter')?.value || 'this';
+      const now = new Date();
+      let filtered = state.expenses.filter(e => {
+        if (cat !== 'all' && e.category !== cat) return false;
+        if (month === 'this') {
+          const d = new Date(e.date);
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }
+        if (month === 'last') {
+          const lm = new Date(now.getFullYear(), now.getMonth()-1, 1);
+          const d = new Date(e.date);
+          return d.getMonth() === lm.getMonth() && d.getFullYear() === lm.getFullYear();
+        }
+        return true;
+      });
+      const tbody = document.getElementById('expenseTable');
+      if (!tbody) return;
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-400 text-sm">No expenses found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).map(e => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50">
+          <td class="p-4 text-sm text-[#1a1a1a]">${e.date}</td>
+          <td class="p-4 text-sm font-medium text-[#1a1a1a]">${e.description}</td>
+          <td class="p-4"><span class="badge badge-${e.category === 'food' ? 'dd' : e.category === 'supplies' ? 'med' : e.category === 'labor' ? 'ue' : 'ok'}">${e.category}</span></td>
+          <td class="p-4 text-sm text-gray-500">${e.vendor || '—'}</td>
+          <td class="p-4 text-sm font-bold text-[#1a1a1a] text-right">$${e.amount.toFixed(2)}</td>
+          <td class="p-4 text-right">
+            <button onclick="openExpenseModal(${e.id})" class="text-blue-500 hover:text-blue-700 text-sm mr-3">Edit</button>
+            <button onclick="deleteExpense(${e.id})" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function updateExpenseSummary() {
+      const now = new Date();
+      const month = state.expenses.filter(e => {
+        const d = new Date(e.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      });
+      const total = month.reduce((a,e) => a + e.amount, 0);
+      const food = month.filter(e => e.category === 'food').reduce((a,e) => a + e.amount, 0);
+      const supplies = month.filter(e => e.category === 'supplies').reduce((a,e) => a + e.amount, 0);
+      const utilities = month.filter(e => ['utilities','rent','labor'].includes(e.category)).reduce((a,e) => a + e.amount, 0);
+      document.getElementById('exp-total').textContent = '$' + total.toFixed(2);
+      document.getElementById('exp-food').textContent = '$' + food.toFixed(2);
+      document.getElementById('exp-supplies').textContent = '$' + supplies.toFixed(2);
+      document.getElementById('exp-utilities').textContent = '$' + utilities.toFixed(2);
     }
 
     // ─── Task Management ─────────────────────────────────────────────────────────
