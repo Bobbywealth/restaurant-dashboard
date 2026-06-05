@@ -9,12 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     * { font-family: 'Inter', sans-serif; }
-    body { background: #0a0a0f; color: #f0f0f5; }
+    body { background: #f8f7f4; color: #1a1a1a; }
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #1a1a2e; }
-    ::-webkit-scrollbar-thumb { background: #3a3a5c; border-radius: 3px; }
-    .glass { background: rgba(20,20,35,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%); border: 1px solid rgba(255,255,255,0.06); }
+    ::-webkit-scrollbar-track { background: #e8e8e4; }
+    ::-webkit-scrollbar-thumb { background: #c0c0bc; border-radius: 3px; }
+    .glass { background: #ffffff; box-shadow: 2px 0 12px rgba(0,0,0,0.08); border-right: 1px solid #e0e0dc; }
+    .stat-card { background: #ffffff; border: 1px solid #e8e8e4; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .accent-red { color: #ff6b6b; }
     .accent-green { color: #51cf66; }
     .accent-yellow { color: #ffd43b; }
@@ -24,50 +24,50 @@
     .border-yellow { border-color: #ffd43b; }
     .border-blue { border-color: #339af0; }
     .nav-btn { transition: all 0.2s; }
-    .nav-btn:hover { background: rgba(255,255,255,0.08); }
-    .nav-btn.active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
-    .order-row:hover { background: rgba(255,255,255,0.04); }
+    .nav-btn:hover { background: rgba(0,0,0,0.05); }
+    .nav-btn.active { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.12); }
+    .order-row:hover { background: rgba(0,0,0,0.03); }
     canvas { max-height: 280px; }
     .pulse-green { animation: pulseGreen 2s infinite; }
     @keyframes pulseGreen { 0%,100%{box-shadow:0 0 0 0 rgba(81,207,102,0.4)} 50%{box-shadow:0 0 0 8px rgba(81,207,102,0)} }
     .pulse-red { animation: pulseRed 2s infinite; }
     @keyframes pulseRed { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0.4)} 50%{box-shadow:0 0 0 8px rgba(255,107,107,0)} }
     .badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
-    .badge-pos { background: rgba(81,207,102,0.15); color: #51cf66; border: 1px solid rgba(51,207,102,0.3); }
-    .badge-dd { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
-    .badge-ue { background: rgba(58,134,255,0.15); color: #339af0; border: 1px solid rgba(51,138,255,0.3); }
-    .badge-gh { background: rgba(255,212,59,0.15); color: #ffd43b; border: 1px solid rgba(255,212,59,0.3); }
-    .badge-low { background: rgba(255,107,107,0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.3); }
-    .badge-ok { background: rgba(81,207,102,0.15); color: #51cf66; border: 1px solid rgba(51,207,102,0.3); }
-    .badge-med { background: rgba(255,212,59,0.15); color: #ffd43b; border: 1px solid rgba(255,212,59,0.3); }
-    .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #339af0; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+    .badge-pos { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .badge-dd { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-ue { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
+    .badge-gh { background: #fef9c3; color: #ca8a04; border: 1px solid #fef08a; }
+    .badge-low { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-ok { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .badge-med { background: #fef9c3; color: #ca8a04; border: 1px solid #fef08a; }
+    .loader { border: 3px solid #e8e8e4; border-top: 3px solid #339af0; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
-    input, select, textarea { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); color: #f0f0f5; border-radius: 8px; padding: 8px 12px; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #339af0; }
-    .tab-btn { padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; border: 1px solid transparent; color: #888; }
-    .tab-btn.active { background: rgba(51,154,240,0.15); color: #339af0; border-color: rgba(51,154,240,0.3); }
-    .tab-btn:hover:not(.active) { color: #ccc; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; }
+    input, select, textarea { background: #ffffff; border: 1px solid #d0d0cc; color: #1a1a1a; border-radius: 8px; padding: 8px 12px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #339af0; box-shadow: 0 0 0 2px rgba(51,154,240,0.15); }
+    .tab-btn { padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; border: 1px solid #d0d0cc; color: #666; background: #fff; }
+    .tab-btn.active { background: #339af0; color: #ffffff; border-color: #339af0; }
+    .tab-btn:hover:not(.active) { color: #555; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: #ffffff; border: 1px solid #e8e8e4; border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
     .todo-check:checked + .todo-text { text-decoration: line-through; color: #666; }
-    .receipt-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+    .receipt-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,0,0,0.04); cursor: pointer; }
   </style>
 </head>
 <body>
   <!-- SIDEBAR -->
-  <aside class="fixed left-0 top-0 h-full w-64 glass z-50 flex flex-col">
-    <div class="p-6 border-b border-white/10">
+  <aside class="fixed left-0 top-0 h-full w-64 bg-white z-50 flex flex-col">
+    <div class="p-6 border-b border-gray-200">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 via-yellow-500 to-green-600 flex items-center justify-center font-black text-black text-lg">🇯🇲</div>
         <div>
-          <div class="font-bold text-white text-sm">Top Taste</div>
-          <div class="text-xs text-gray-400">Jamaican Restaurant</div>
+          <div class="font-bold text-[#1a1a1a] text-sm">Top Taste</div>
+          <div class="text-xs text-gray-600">Jamaican Restaurant</div>
         </div>
       </div>
     </div>
     <nav class="flex-1 py-4 overflow-y-auto">
       <div class="px-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Overview</div>
-      <button onclick="showSection('dashboard')" class="nav-btn active w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-dashboard">
+      <button onclick="showSection('dashboard')" class="nav-btn active w-full flex items-center gap-3 px-6 py-3 text-left text-sm text-[#1a1a1a]" id="nav-dashboard">
         <span class="text-lg">📊</span> Dashboard
       </button>
       <button onclick="showSection('orders')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-orders">
@@ -113,20 +113,20 @@
     <div class="p-4 border-t border-white/10">
       <div class="flex items-center justify-between text-xs text-gray-500">
         <span id="clock"></span>
-        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 pulse-green"></span> Live</span>
+        <span class="flex items-center gap-1 text-gray-600"><span class="w-2 h-2 rounded-full bg-green-500 pulse-green"></span> Live</span>
       </div>
     </div>
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main class="ml-64 min-h-screen p-6">
+  <main class="ml-64 min-h-screen p-6 bg-[#f8f7f4]">
 
     <!-- DASHBOARD -->
     <section id="section-dashboard" class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-black text-white">Dashboard</h1>
-          <p class="text-gray-400 text-sm mt-1" id="dateLabel"></p>
+          <h1 class="text-2xl font-black text-[#1a1a1a]">Dashboard</h1>
+          <p class="text-gray-600 text-sm mt-1" id="dateLabel"></p>
         </div>
         <div class="flex gap-3">
           <select id="dateFilter" onchange="fetchAll()">
@@ -147,7 +147,7 @@
             <span class="badge badge-pos">POS</span>
           </div>
           <div class="text-3xl font-black text-white" id="kpi-pos-revenue">--</div>
-          <div class="text-xs text-gray-400 mt-1">POS Revenue</div>
+          <div class="text-xs text-gray-600 mt-1">POS Revenue</div>
           <div class="text-xs accent-green mt-1" id="kpi-pos-orders">-- orders</div>
         </div>
         <div class="stat-card rounded-2xl p-5">
@@ -156,7 +156,7 @@
             <span class="badge badge-dd">DoorDash</span>
           </div>
           <div class="text-3xl font-black text-white" id="kpi-dd-revenue">--</div>
-          <div class="text-xs text-gray-400 mt-1">DoorDash Revenue</div>
+          <div class="text-xs text-gray-600 mt-1">DoorDash Revenue</div>
           <div class="text-xs accent-red mt-1" id="kpi-dd-orders">-- orders</div>
         </div>
         <div class="stat-card rounded-2xl p-5">
@@ -165,7 +165,7 @@
             <span class="badge badge-ue">Uber Eats</span>
           </div>
           <div class="text-3xl font-black text-white" id="kpi-ue-revenue">--</div>
-          <div class="text-xs text-gray-400 mt-1">Uber Eats Revenue</div>
+          <div class="text-xs text-gray-600 mt-1">Uber Eats Revenue</div>
           <div class="text-xs accent-blue mt-1" id="kpi-ue-orders">-- orders</div>
         </div>
         <div class="stat-card rounded-2xl p-5">
@@ -174,7 +174,7 @@
             <span class="badge badge-gh">Grubhub</span>
           </div>
           <div class="text-3xl font-black text-white" id="kpi-gh-revenue">--</div>
-          <div class="text-xs text-gray-400 mt-1">Grubhub Revenue</div>
+          <div class="text-xs text-gray-600 mt-1">Grubhub Revenue</div>
           <div class="text-xs accent-yellow mt-1" id="kpi-gh-orders">-- orders</div>
         </div>
       </div>
@@ -182,17 +182,17 @@
       <!-- Combined Stats -->
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Combined Revenue</div>
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Combined Revenue</div>
           <div class="text-4xl font-black text-white mt-2" id="kpi-combined-revenue">--</div>
           <div class="text-xs text-gray-500 mt-1">All channels</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Orders</div>
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Total Orders</div>
           <div class="text-4xl font-black text-white mt-2" id="kpi-combined-orders">--</div>
           <div class="text-xs text-gray-500 mt-1">All channels</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-bold">Avg Order Value</div>
+          <div class="text-xs text-gray-600 uppercase tracking-wider font-bold">Avg Order Value</div>
           <div class="text-4xl font-black text-white mt-2" id="kpi-avg-order">--</div>
           <div class="text-xs text-gray-500 mt-1">All channels</div>
         </div>
@@ -226,7 +226,7 @@
     <!-- ORDERS -->
     <section id="section-orders" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">All Orders</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">All Orders</h1>
         <div class="flex gap-3">
           <select id="ordersPlatform" onchange="fetchOrders()">
             <option value="all">All Platforms</option>
@@ -241,10 +241,10 @@
           </select>
         </div>
       </div>
-      <div class="stat-card rounded-2xl overflow-hidden">
+      <div class="bg-white rounded-2xl overflow-hidden border border-[#e8e8e4] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
         <table class="w-full text-sm">
-          <thead class="bg-white/5">
-            <tr class="text-gray-400 text-xs uppercase tracking-wider">
+          <thead class="bg-gray-100">
+            <tr class="text-gray-600 text-xs uppercase tracking-wider">
               <th class="text-left p-4 font-bold">Order ID</th>
               <th class="text-left p-4 font-bold">Platform</th>
               <th class="text-left p-4 font-bold">Time</th>
@@ -252,25 +252,25 @@
               <th class="text-right p-4 font-bold">Total</th>
             </tr>
           </thead>
-          <tbody id="ordersTable" class="divide-y divide-white/5"></tbody>
+          <tbody id="ordersTable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
     </section>
 
     <!-- DOORDASH -->
     <section id="section-doordash" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">🚴 DoorDash</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">🚴 DoorDash</h1>
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-xs text-gray-600 font-bold">Revenue</div>
           <div class="text-3xl font-black text-white mt-2" id="dd-revenue">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-xs text-gray-600 font-bold">Orders</div>
           <div class="text-3xl font-black text-white mt-2" id="dd-orders">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
           <div class="text-3xl font-black text-white mt-2" id="dd-avg">--</div>
         </div>
       </div>
@@ -282,18 +282,18 @@
 
     <!-- UBEREATS -->
     <section id="section-ubereats" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">⚡ Uber Eats</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">⚡ Uber Eats</h1>
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-xs text-gray-600 font-bold">Revenue</div>
           <div class="text-3xl font-black text-white mt-2" id="ue-revenue">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-xs text-gray-600 font-bold">Orders</div>
           <div class="text-3xl font-black text-white mt-2" id="ue-orders">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
           <div class="text-3xl font-black text-white mt-2" id="ue-avg">--</div>
         </div>
       </div>
@@ -305,18 +305,18 @@
 
     <!-- GRUBHUB -->
     <section id="section-grubhub" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">🍔 Grubhub</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">🍔 Grubhub</h1>
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-xs text-gray-600 font-bold">Revenue</div>
           <div class="text-3xl font-black text-white mt-2" id="gh-revenue">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-xs text-gray-600 font-bold">Orders</div>
           <div class="text-3xl font-black text-white mt-2" id="gh-orders">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
           <div class="text-3xl font-black text-white mt-2" id="gh-avg">--</div>
         </div>
       </div>
@@ -328,18 +328,18 @@
 
     <!-- TOAST POS -->
     <section id="section-pos" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">💳 Toast POS</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">💳 Toast POS</h1>
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Revenue</div>
+          <div class="text-xs text-gray-600 font-bold">Revenue</div>
           <div class="text-3xl font-black text-white mt-2" id="pos-revenue">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Orders</div>
+          <div class="text-xs text-gray-600 font-bold">Orders</div>
           <div class="text-3xl font-black text-white mt-2" id="pos-orders">--</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Ticket</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Ticket</div>
           <div class="text-3xl font-black text-white mt-2" id="pos-avg">--</div>
         </div>
       </div>
@@ -352,7 +352,7 @@
     <!-- TASKS -->
     <section id="section-tasks" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">✅ Task Management</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">✅ Task Management</h1>
         <button onclick="openTaskModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
           + Add Task
         </button>
@@ -361,15 +361,15 @@
       <!-- Task Stats -->
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Tasks</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Total Tasks</div>
           <div class="text-3xl font-black text-white mt-2" id="task-total">0</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Completed</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Completed</div>
           <div class="text-3xl font-black text-white mt-2" id="task-done">0</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Pending</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Pending</div>
           <div class="text-3xl font-black text-white mt-2" id="task-pending">0</div>
         </div>
       </div>
@@ -391,7 +391,7 @@
     <!-- INVENTORY -->
     <section id="section-inventory" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">📦 Inventory Management</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">📦 Inventory Management</h1>
         <div class="flex gap-3">
           <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
             + Add Item
@@ -405,15 +405,15 @@
       <!-- Inventory Alerts -->
       <div class="grid grid-cols-3 gap-4">
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Items</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Total Items</div>
           <div class="text-3xl font-black text-white mt-2" id="inv-total">0</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">In Stock</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">In Stock</div>
           <div class="text-3xl font-black text-white mt-2" id="inv-ok">0</div>
         </div>
         <div class="stat-card rounded-2xl p-5 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Low Stock</div>
+          <div class="text-xs text-gray-600 font-bold uppercase tracking-wider">Low Stock</div>
           <div class="text-3xl font-black text-white mt-2" id="inv-low">0</div>
         </div>
       </div>
@@ -437,10 +437,10 @@
       </div>
 
       <!-- Inventory Table -->
-      <div class="stat-card rounded-2xl overflow-hidden">
+      <div class="bg-white rounded-2xl overflow-hidden border border-[#e8e8e4] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
         <table class="w-full text-sm">
-          <thead class="bg-white/5">
-            <tr class="text-gray-400 text-xs uppercase tracking-wider">
+          <thead class="bg-gray-100">
+            <tr class="text-gray-600 text-xs uppercase tracking-wider">
               <th class="text-left p-4 font-bold">Item</th>
               <th class="text-left p-4 font-bold">Category</th>
               <th class="text-right p-4 font-bold">Qty</th>
@@ -452,7 +452,7 @@
               <th class="text-right p-4 font-bold">Actions</th>
             </tr>
           </thead>
-          <tbody id="inventoryTable" class="divide-y divide-white/5"></tbody>
+          <tbody id="inventoryTable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
 
@@ -465,13 +465,13 @@
 
     <!-- MARKETING -->
     <section id="section-marketing" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">📣 Marketing Hub</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">📣 Marketing Hub</h1>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="stat-card rounded-2xl p-6">
           <h3 class="font-bold text-white mb-4">✉️ Campaign Launcher</h3>
           <div class="space-y-4">
             <div>
-              <label class="text-xs text-gray-400 font-bold uppercase">Campaign Type</label>
+              <label class="text-xs text-gray-600 font-bold uppercase">Campaign Type</label>
               <select id="campaignType" class="w-full mt-1">
                 <option value="sms">SMS Promotion</option>
                 <option value="email">Email Newsletter</option>
@@ -479,11 +479,11 @@
               </select>
             </div>
             <div>
-              <label class="text-xs text-gray-400 font-bold uppercase">Message</label>
+              <label class="text-xs text-gray-600 font-bold uppercase">Message</label>
               <textarea id="campaignMsg" rows="4" class="w-full mt-1" placeholder="Today's special: Jerk chicken platter $12.99! Call (908) 686-8178 to order..."></textarea>
             </div>
             <div>
-              <label class="text-xs text-gray-400 font-bold uppercase">Platforms</label>
+              <label class="text-xs text-gray-600 font-bold uppercase">Platforms</label>
               <div class="flex gap-4 mt-2">
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> DoorDash</label>
                 <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="accent-green"> Uber Eats</label>
@@ -501,22 +501,22 @@
           <div class="space-y-3">
             <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('LUNCH_SPECIAL')">
               <div class="font-bold text-white">🍱 Lunch Special</div>
-              <div class="text-xs text-gray-400 mt-1">10% off orders 11am-2pm</div>
+              <div class="text-xs text-gray-600 mt-1">10% off orders 11am-2pm</div>
               <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
             </div>
             <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('FIRST_ORDER')">
               <div class="font-bold text-white">👋 First Order Discount</div>
-              <div class="text-xs text-gray-400 mt-1">15% off first order</div>
+              <div class="text-xs text-gray-600 mt-1">15% off first order</div>
               <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
             </div>
             <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('FREE_DELIVERY')">
               <div class="font-bold text-white">🚚 Free Delivery</div>
-              <div class="text-xs text-gray-400 mt-1">No delivery fee on orders $25+</div>
+              <div class="text-xs text-gray-600 mt-1">No delivery fee on orders $25+</div>
               <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
             </div>
             <div class="bg-white/5 rounded-xl p-4" onclick="insertPromotion('COMBO_DEAL')">
               <div class="font-bold text-white">🍛 Combo Meal Deal</div>
-              <div class="text-xs text-gray-400 mt-1">Entree + sides + drink for $14.99</div>
+              <div class="text-xs text-gray-600 mt-1">Entree + sides + drink for $14.99</div>
               <button class="mt-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg text-white">Insert</button>
             </div>
           </div>
@@ -524,7 +524,7 @@
       </div>
       <div class="stat-card rounded-2xl p-6">
         <h3 class="font-bold text-white mb-4">📅 Scheduled Campaigns</h3>
-        <div class="text-sm text-gray-400" id="scheduledCampaigns">
+        <div class="text-sm text-gray-600" id="scheduledCampaigns">
           <div class="flex items-center justify-center py-8">
             <div class="text-center">
               <div class="text-3xl mb-2">📭</div>
@@ -538,15 +538,15 @@
         <div class="grid grid-cols-3 gap-4">
           <div class="bg-white/5 rounded-xl p-4 text-center">
             <div class="text-2xl font-black text-white" id="mkt-total-sent">--</div>
-            <div class="text-xs text-gray-400 mt-1">Messages Sent</div>
+            <div class="text-xs text-gray-600 mt-1">Messages Sent</div>
           </div>
           <div class="bg-white/5 rounded-xl p-4 text-center">
             <div class="text-2xl font-black text-white" id="mkt-open-rate">--</div>
-            <div class="text-xs text-gray-400 mt-1">Open Rate</div>
+            <div class="text-xs text-gray-600 mt-1">Open Rate</div>
           </div>
           <div class="bg-white/5 rounded-xl p-4 text-center">
             <div class="text-2xl font-black text-white" id="mkt-orders-from-campaign">--</div>
-            <div class="text-xs text-gray-400 mt-1">Orders from Campaign</div>
+            <div class="text-xs text-gray-600 mt-1">Orders from Campaign</div>
           </div>
         </div>
       </div>
@@ -557,7 +557,7 @@
     ═══════════════════════════════════════════════ -->
     <section id="section-menu" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">🍽️ Menu Management</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">🍽️ Menu Management</h1>
         <div class="flex gap-3">
           <button onclick="openMenuItemModal()" class="bg-green-500/20 hover:bg-green-500/30 text-green-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Add Item</button>
           <button onclick="openMenuCategoryModal()" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Category</button>
@@ -572,19 +572,19 @@
       <!-- Menu stats -->
       <div class="grid grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-orange-500">
-          <div class="text-xs text-gray-400 font-bold">Total Items</div>
+          <div class="text-xs text-gray-600 font-bold">Total Items</div>
           <div class="text-2xl font-black text-white mt-1" id="menu-total">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Available</div>
+          <div class="text-xs text-gray-600 font-bold">Available</div>
           <div class="text-2xl font-black text-green-400 mt-1" id="menu-available">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold">Unavailable</div>
+          <div class="text-xs text-gray-600 font-bold">Unavailable</div>
           <div class="text-2xl font-black text-red-400 mt-1" id="menu-unavailable">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Featured</div>
+          <div class="text-xs text-gray-600 font-bold">Featured</div>
           <div class="text-2xl font-black text-yellow-400 mt-1" id="menu-featured">--</div>
         </div>
       </div>
@@ -604,26 +604,26 @@
     ═══════════════════════════════════════════════ -->
     <section id="section-staff" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">👥 Staff & Scheduling</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">👥 Staff & Scheduling</h1>
         <button onclick="openStaffModal()" class="bg-green-500/20 hover:bg-green-500/30 text-green-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Add Employee</button>
       </div>
 
       <!-- Labor cost summary -->
       <div class="grid grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Active Employees</div>
+          <div class="text-xs text-gray-600 font-bold">Active Employees</div>
           <div class="text-2xl font-black text-white mt-1" id="staff-total">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-purple-500">
-          <div class="text-xs text-gray-400 font-bold">Total Labor Cost</div>
+          <div class="text-xs text-gray-600 font-bold">Total Labor Cost</div>
           <div class="text-2xl font-black text-purple-400 mt-1" id="staff-labor-cost">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Total Hours</div>
+          <div class="text-xs text-gray-600 font-bold">Total Hours</div>
           <div class="text-2xl font-black text-yellow-400 mt-1" id="staff-total-hours">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Hourly Rate</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Hourly Rate</div>
           <div class="text-2xl font-black text-green-400 mt-1" id="staff-avg-rate">--</div>
         </div>
       </div>
@@ -653,7 +653,7 @@
     ═══════════════════════════════════════════════ -->
     <section id="section-reports" class="hidden space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-black text-white">📈 Reports & Analytics</h1>
+        <h1 class="text-2xl font-black text-[#1a1a1a]">📈 Reports & Analytics</h1>
         <div class="flex gap-2">
           <button onclick="exportReportCSV()" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">📥 Export CSV</button>
         </div>
@@ -662,26 +662,26 @@
       <!-- Period selector -->
       <div class="flex gap-2">
         <button onclick="setReportPeriod('7')" class="report-period-btn active bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold" data-days="7">7 Days</button>
-        <button onclick="setReportPeriod('14')" class="report-period-btn bg-white/5 text-gray-400 px-4 py-2 rounded-xl text-sm font-bold" data-days="14">14 Days</button>
-        <button onclick="setReportPeriod('30')" class="report-period-btn bg-white/5 text-gray-400 px-4 py-2 rounded-xl text-sm font-bold" data-days="30">30 Days</button>
+        <button onclick="setReportPeriod('14')" class="report-period-btn bg-white/5 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold" data-days="14">14 Days</button>
+        <button onclick="setReportPeriod('30')" class="report-period-btn bg-white/5 text-gray-600 px-4 py-2 rounded-xl text-sm font-bold" data-days="30">30 Days</button>
       </div>
 
       <!-- Revenue summary -->
       <div class="grid grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">Total Revenue</div>
+          <div class="text-xs text-gray-600 font-bold">Total Revenue</div>
           <div class="text-2xl font-black text-green-400 mt-1" id="rpt-total-rev">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Total Orders</div>
+          <div class="text-xs text-gray-600 font-bold">Total Orders</div>
           <div class="text-2xl font-black text-white mt-1" id="rpt-total-orders">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-purple-500">
-          <div class="text-xs text-gray-400 font-bold">Avg Order Value</div>
+          <div class="text-xs text-gray-600 font-bold">Avg Order Value</div>
           <div class="text-2xl font-black text-purple-400 mt-1" id="rpt-avg-order">--</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-orange-500">
-          <div class="text-xs text-gray-400 font-bold">Est. Net Profit</div>
+          <div class="text-xs text-gray-600 font-bold">Est. Net Profit</div>
           <div class="text-2xl font-black text-orange-400 mt-1" id="rpt-net-profit">--</div>
         </div>
       </div>
@@ -695,22 +695,22 @@
       <!-- Platform breakdown -->
       <div class="grid grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
-          <div class="text-xs text-gray-400 font-bold">In-Store (POS)</div>
+          <div class="text-xs text-gray-600 font-bold">In-Store (POS)</div>
           <div class="text-xl font-black text-green-400 mt-1" id="rpt-pos-rev">--</div>
           <div class="text-xs text-gray-500 mt-1" id="rpt-pos-pct">-- of total</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-red-500">
-          <div class="text-xs text-gray-400 font-bold">DoorDash</div>
+          <div class="text-xs text-gray-600 font-bold">DoorDash</div>
           <div class="text-xl font-black text-red-400 mt-1" id="rpt-dd-rev">--</div>
           <div class="text-xs text-gray-500 mt-1" id="rpt-dd-pct">-- of total</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-400 font-bold">Uber Eats</div>
+          <div class="text-xs text-gray-600 font-bold">Uber Eats</div>
           <div class="text-xl font-black text-blue-400 mt-1" id="rpt-ue-rev">--</div>
           <div class="text-xs text-gray-500 mt-1" id="rpt-ue-pct">-- of total</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-400 font-bold">Grubhub</div>
+          <div class="text-xs text-gray-600 font-bold">Grubhub</div>
           <div class="text-xl font-black text-yellow-400 mt-1" id="rpt-gh-rev">--</div>
           <div class="text-xs text-gray-500 mt-1" id="rpt-gh-pct">-- of total</div>
         </div>
@@ -721,7 +721,7 @@
         <div class="font-bold text-white mb-4">Top Selling Items</div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
-            <thead><tr class="text-gray-400 text-xs uppercase tracking-wider border-b border-white/10">
+            <thead><tr class="text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
               <th class="text-left p-2">Item</th><th class="text-right p-2">Orders</th><th class="text-right p-2">Revenue</th><th class="text-right p-2">Margin</th></tr>
             </thead>
             <tbody id="rpt-top-items"></tbody>
@@ -734,26 +734,26 @@
          SETTINGS
     ═══════════════════════════════════════════════ -->
     <section id="section-settings" class="hidden space-y-6">
-      <h1 class="text-2xl font-black text-white">⚙️ Settings</h1>
+      <h1 class="text-2xl font-black text-[#1a1a1a]">⚙️ Settings</h1>
 
       <!-- General -->
       <div class="stat-card rounded-2xl p-6">
         <div class="font-bold text-white mb-4 flex items-center gap-2">🏠 Restaurant Info</div>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Restaurant Name</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Restaurant Name</label>
             <input type="text" id="set-restaurant-name" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="Restaurant name">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Phone</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Phone</label>
             <input type="text" id="set-restaurant-phone" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="(555) 000-0000">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Address</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Address</label>
             <input type="text" id="set-restaurant-address" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="123 Main St, City, ST 00000">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Tax Rate (%)</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Tax Rate (%)</label>
             <input type="number" step="0.001" id="set-tax-rate" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="6.625">
           </div>
         </div>
@@ -772,15 +772,15 @@
         <div class="font-bold text-white mb-4">💸 Platform Commission Rates</div>
         <div class="grid grid-cols-3 gap-4">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">DoorDash %</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">DoorDash %</label>
             <input type="number" step="0.1" id="set-dd-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="30">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Uber Eats %</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Uber Eats %</label>
             <input type="number" step="0.1" id="set-ue-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="30">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Grubhub %</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Grubhub %</label>
             <input type="number" step="0.1" id="set-gh-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="27.5">
           </div>
         </div>
@@ -792,11 +792,11 @@
         <div class="font-bold text-white mb-4">🔑 Toast POS API</div>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Client ID</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Client ID</label>
             <input type="password" id="set-toast-client-id" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Client Secret</label>
+            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Client Secret</label>
             <input type="password" id="set-toast-client-secret" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
           </div>
         </div>
@@ -811,15 +811,15 @@
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white" id="taskModalTitle">Add Task</h2>
-        <button onclick="closeTaskModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeTaskModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Task Title *</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Task Title *</label>
           <input type="text" id="task-title" class="w-full mt-1" placeholder="e.g. Restock chicken supplies" />
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Priority</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Priority</label>
           <select id="task-priority" class="w-full mt-1">
             <option value="high">🔴 High</option>
             <option value="medium" selected>🟡 Medium</option>
@@ -827,11 +827,11 @@
           </select>
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Due Date</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Due Date</label>
           <input type="date" id="task-due" class="w-full mt-1" />
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Description</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Description</label>
           <textarea id="task-desc" rows="3" class="w-full mt-1" placeholder="Optional details..."></textarea>
         </div>
         <div class="flex gap-3">
@@ -847,16 +847,16 @@
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white" id="invModalTitle">Add Inventory Item</h2>
-        <button onclick="closeInventoryModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeInventoryModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Item Name *</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Item Name *</label>
           <input type="text" id="inv-name" class="w-full mt-1" placeholder="e.g. Chicken Breast" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Category</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Category</label>
             <select id="inv-cat" class="w-full mt-1">
               <option value="produce">Produce</option>
               <option value="meat">Meat & Protein</option>
@@ -866,22 +866,22 @@
             </select>
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Unit</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Unit</label>
             <input type="text" id="inv-unit" class="w-full mt-1" placeholder="e.g. lbs, cases, each" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Current Qty *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Current Qty *</label>
             <input type="number" id="inv-qty" class="w-full mt-1" placeholder="0" min="0" />
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Min Qty *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Min Qty *</label>
             <input type="number" id="inv-min" class="w-full mt-1" placeholder="0" min="0" />
           </div>
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Notes</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Notes</label>
           <textarea id="inv-notes" rows="2" class="w-full mt-1" placeholder="Supplier info, storage notes..."></textarea>
         </div>
         <div class="flex gap-3">
@@ -897,30 +897,30 @@
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white">📄 Upload Receipt</h2>
-        <button onclick="closeReceiptModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeReceiptModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Supplier / Vendor</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Supplier / Vendor</label>
           <input type="text" id="receipt-supplier" class="w-full mt-1" placeholder="e.g. Sysco Foods, RestaurantDepot" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Date</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Date</label>
             <input type="date" id="receipt-date" class="w-full mt-1" />
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Total ($)</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Total ($)</label>
             <input type="number" id="receipt-total" class="w-full mt-1" placeholder="0.00" step="0.01" min="0" />
           </div>
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Items (one per line)</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Items (one per line)</label>
           <textarea id="receipt-items" rows="4" class="w-full mt-1" placeholder="Chicken Breast x5 cases&#10;Jerk Seasoning x3 jars&#10;Plantains x2 cases"></textarea>
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Receipt Image (optional)</label>
-          <input type="file" id="receipt-file" class="w-full mt-1 text-sm text-gray-400" accept="image/*" />
+          <label class="text-xs text-gray-600 font-bold uppercase">Receipt Image (optional)</label>
+          <input type="file" id="receipt-file" class="w-full mt-1 text-sm text-gray-600" accept="image/*" />
           <div id="receipt-preview" class="mt-2 hidden">
             <img id="receipt-img-preview" class="h-32 object-contain rounded-lg border border-white/10" />
           </div>
@@ -938,40 +938,40 @@
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white" id="menuItemModalTitle">🍽️ Add Menu Item</h2>
-        <button onclick="closeMenuItemModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeMenuItemModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div class="col-span-2">
-            <label class="text-xs text-gray-400 font-bold uppercase">Item Name *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Item Name *</label>
             <input type="text" id="mi-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Jerk Chicken Platter">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Category</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Category</label>
             <select id="mi-category" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50"></select>
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Price ($) *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Price ($) *</label>
             <input type="number" step="0.01" id="mi-price" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="0.00">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Cost ($)</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Cost ($)</label>
             <input type="number" step="0.01" id="mi-cost" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="0.00">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Prep Time (min)</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Prep Time (min)</label>
             <input type="number" id="mi-prep" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="15">
           </div>
           <div class="col-span-2">
-            <label class="text-xs text-gray-400 font-bold uppercase">Description</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Description</label>
             <input type="text" id="mi-desc" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Grilled chicken with signature jerk marinade...">
           </div>
           <div class="col-span-2">
-            <label class="text-xs text-gray-400 font-bold uppercase">Allergens</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Allergens</label>
             <input type="text" id="mi-allergens" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Gluten, Dairy, Nuts">
           </div>
           <div class="col-span-2">
-            <label class="text-xs text-gray-400 font-bold uppercase">Image URL</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Image URL</label>
             <input type="text" id="mi-image" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="https://...">
           </div>
           <div class="flex gap-6">
@@ -996,11 +996,11 @@
     <div class="modal-content max-w-sm">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white">📂 Add Category</h2>
-        <button onclick="closeMenuCategoryModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeMenuCategoryModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Category Name *</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Category Name *</label>
           <input type="text" id="mc-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Appetizers">
         </div>
         <div class="flex gap-3 justify-end pt-2">
@@ -1016,16 +1016,16 @@
     <div class="modal-content">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white" id="staffModalTitle">👤 Add Employee</h2>
-        <button onclick="closeStaffModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeStaffModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Name *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Name *</label>
             <input type="text" id="st-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Full name">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Role *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Role *</label>
             <select id="st-role" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
               <option value="Owner">Owner</option>
               <option value="Head Chef">Head Chef</option>
@@ -1039,23 +1039,23 @@
             </select>
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Email</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Email</label>
             <input type="email" id="st-email" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="name@email.com">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Phone</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Phone</label>
             <input type="tel" id="st-phone" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="(555) 000-0000">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Hourly Rate ($)</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Hourly Rate ($)</label>
             <input type="number" step="0.25" id="st-rate" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="16.00">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Hire Date</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Hire Date</label>
             <input type="date" id="st-hire-date" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
           </div>
           <div class="col-span-2">
-            <label class="text-xs text-gray-400 font-bold uppercase">Notes</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Notes</label>
             <input type="text" id="st-notes" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Any notes...">
           </div>
           <div class="col-span-2">
@@ -1077,24 +1077,24 @@
     <div class="modal-content max-w-sm">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-white">📅 Add Shift</h2>
-        <button onclick="closeShiftModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+        <button onclick="closeShiftModal()" class="text-gray-600 hover:text-white text-xl">✕</button>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Employee *</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Employee *</label>
           <select id="sh-staff-id" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50"></select>
         </div>
         <div>
-          <label class="text-xs text-gray-400 font-bold uppercase">Date *</label>
+          <label class="text-xs text-gray-600 font-bold uppercase">Date *</label>
           <input type="date" id="sh-date" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">Start *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">Start *</label>
             <input type="time" id="sh-start" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" value="09:00">
           </div>
           <div>
-            <label class="text-xs text-gray-400 font-bold uppercase">End *</label>
+            <label class="text-xs text-gray-600 font-bold uppercase">End *</label>
             <input type="time" id="sh-end" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" value="17:00">
           </div>
         </div>
@@ -1188,7 +1188,7 @@
         COMPLETED:'bg-green-500/15 text-green-400',
         ACCEPTED:'bg-blue-500/15 text-blue-400',
         PREPARING:'bg-yellow-500/15 text-yellow-400',
-        PENDING:'bg-gray-500/15 text-gray-400'
+        PENDING:'bg-gray-500/15 text-gray-600'
       };
       return `<span class="text-xs px-2 py-0.5 rounded-full font-bold ${map[s]||map.PENDING}">${s||'PENDING'}</span>`;
     }
@@ -1265,7 +1265,7 @@
             borderRadius: 8
           }]
         },
-        options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#888'}}, x:{grid:{display:false},ticks:{color:'#888'}}} }
+        options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#888'}}, x:{grid:{display:false},ticks:{color:'#888'}}} }
       });
 
       state.charts.orders = new Chart(ordCtx, {
@@ -1344,7 +1344,7 @@
         <tr class="order-row transition-colors cursor-pointer">
           <td class="p-4 text-white font-mono text-xs">${(o._id||'--').slice(0,20)}</td>
           <td class="p-4">${badge(o._source)}</td>
-          <td class="p-4 text-gray-400 text-xs">${o.placedAt||'--'}</td>
+          <td class="p-4 text-gray-600 text-xs">${o.placedAt||'--'}</td>
           <td class="p-4">${statusBadge(o.status)}</td>
           <td class="p-4 text-right font-bold text-white">${fmt(o.total)}</td>
         </tr>`).join('');
@@ -1601,12 +1601,12 @@
         return `
         <tr class="order-row transition-colors">
           <td class="p-4 text-white font-medium">${item.name}</td>
-          <td class="p-4 text-gray-400 text-xs">${catLabel[item.category] || item.category}</td>
+          <td class="p-4 text-gray-600 text-xs">${catLabel[item.category] || item.category}</td>
           <td class="p-4 text-right font-bold ${isLow?'text-red-400':'text-white'}">${item.qty}</td>
-          <td class="p-4 text-right text-gray-400">${item.minQty}</td>
-          <td class="p-4 text-gray-400 text-xs">${item.unit}</td>
+          <td class="p-4 text-right text-gray-600">${item.minQty}</td>
+          <td class="p-4 text-gray-600 text-xs">${item.unit}</td>
           <td class="p-4">${statusBadge}</td>
-          <td class="p-4 text-gray-400 text-xs">${item.lastRestocked ? df(item.lastRestocked) : 'Never'}</td>
+          <td class="p-4 text-gray-600 text-xs">${item.lastRestocked ? df(item.lastRestocked) : 'Never'}</td>
           <td class="p-4">${receiptThumb}</td>
           <td class="p-4 text-right">
             <button onclick="restockItem('${item.id}')" class="text-xs bg-green-500/20 hover:bg-green-500/40 text-green-400 px-2 py-1 rounded-lg mr-1">+ Stock</button>
@@ -1705,7 +1705,7 @@
       if (output) {
         output.innerHTML = `<div class="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
           <span class="text-lg">✅</span>
-          <div><div class="font-bold">Campaign Queued (${type.toUpperCase()})!</div><div class="text-gray-400 text-xs">${msg.slice(0,60)}...</div></div>
+          <div><div class="font-bold">Campaign Queued (${type.toUpperCase()})!</div><div class="text-gray-600 text-xs">${msg.slice(0,60)}...</div></div>
         </div>` + (output.innerHTML || '');
       }
       document.getElementById('campaignMsg').value = '';
@@ -1738,7 +1738,7 @@
       const cats = [{id:'all',name:'All Items'}, ...menuCategories.filter(c => c.active !== false)];
       tabs.innerHTML = cats.map(c => `
         <button onclick="filterMenuByCategory('${c.id}')"
-          class="menu-cat-tab ${activeMenuCategory === String(c.id) ? 'active bg-white/10 text-white' : 'bg-white/5 text-gray-400'} px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+          class="menu-cat-tab ${activeMenuCategory === String(c.id) ? 'active bg-white/10 text-white' : 'bg-white/5 text-gray-600'} px-4 py-2 rounded-xl text-sm font-bold transition-colors"
           data-cat="${c.id}">${c.name}</button>
       `).join('');
     }
@@ -1788,7 +1788,7 @@
                 ${!item.available ? '<span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-bold">Unavailable</span>' : ''}
               </div>
               <div class="text-xs text-gray-500 mt-1">${cat ? cat.name : 'Uncategorized'}${item.allergens ? ' · ' + item.allergens : ''}</div>
-              ${item.description ? `<div class="text-xs text-gray-400 mt-1 line-clamp-2">${item.description}</div>` : ''}
+              ${item.description ? `<div class="text-xs text-gray-600 mt-1 line-clamp-2">${item.description}</div>` : ''}
             </div>
             <div class="text-right shrink-0">
               <div class="text-white font-black text-lg">${fmt(item.price)}</div>
@@ -1969,14 +1969,14 @@
         const dayShifts = shiftsList.filter(s => s.shift_date === dates[i].toISOString().split('T')[0]);
         return `
         <div class="flex-1 min-w-[90px]">
-          <div class="text-center text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">${day}</div>
+          <div class="text-center text-xs font-bold text-gray-600 mb-2 uppercase tracking-wider">${day}</div>
           <div class="space-y-1">
             ${dayShifts.length === 0 ? `<div class="text-center text-gray-600 text-xs py-4">—</div>` :
               dayShifts.map(s => `
               <div class="bg-white/5 rounded-lg p-2 text-xs cursor-pointer hover:bg-white/10 transition-colors"
                    onclick="deleteShift(${s.id})" title="Click to delete">
                 <div class="text-white font-bold truncate">${s.staff_name || 'Staff'}</div>
-                <div class="text-gray-400">${s.start_time?.slice(0,5)}–${s.end_time?.slice(0,5)}</div>
+                <div class="text-gray-600">${s.start_time?.slice(0,5)}–${s.end_time?.slice(0,5)}</div>
                 ${s.role ? `<div class="text-gray-500 truncate">${s.role}</div>` : ''}
               </div>`).join('')
             }
@@ -2001,7 +2001,7 @@
               <span class="text-white font-bold text-sm">${s.name}</span>
               ${!s.active ? '<span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">Inactive</span>' : ''}
             </div>
-            <div class="text-xs ${roleColors[s.role]||'text-gray-400'} mt-0.5">${s.role || 'Unknown role'}</div>
+            <div class="text-xs ${roleColors[s.role]||'text-gray-600'} mt-0.5">${s.role || 'Unknown role'}</div>
             ${s.email ? `<div class="text-xs text-gray-500 mt-0.5">${s.email}</div>` : ''}
           </div>
           <div class="text-right shrink-0">
@@ -2189,7 +2189,7 @@
               responsive: true,
               plugins: { legend: { position: 'bottom', labels: { color: '#888', padding: 20 } } },
               scales: {
-                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888' } },
+                y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#888' } },
                 x: { grid: { display: false }, ticks: { color: '#888' } }
               }
             }
@@ -2205,7 +2205,7 @@
             tbody.innerHTML = topItems.slice(0, 10).map(item => `
               <tr class="border-b border-white/5 hover:bg-white/5">
                 <td class="p-2 text-white text-sm">${item.name}</td>
-                <td class="p-2 text-right text-gray-400 text-sm">${item.count || 0}</td>
+                <td class="p-2 text-right text-gray-600 text-sm">${item.count || 0}</td>
                 <td class="p-2 text-right text-white font-bold text-sm">${fmt(item.revenue || 0)}</td>
                 <td class="p-2 text-right text-sm ${(item.margin_pct || 0) > 60 ? 'text-green-400' : (item.margin_pct || 0) > 40 ? 'text-yellow-400' : 'text-red-400'}">${item.margin_pct || '--'}%</td>
               </tr>`).join('');
@@ -2221,7 +2221,7 @@
         b.classList.toggle('bg-white/10', b.dataset.days === days);
         b.classList.toggle('text-white', b.dataset.days === days);
         b.classList.toggle('bg-white/5', b.dataset.days !== days);
-        b.classList.toggle('text-gray-400', b.dataset.days !== days);
+        b.classList.toggle('text-gray-600', b.dataset.days !== days);
       });
       loadReports();
     }
