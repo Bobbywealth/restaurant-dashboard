@@ -97,6 +97,18 @@
       <button onclick="showSection('marketing')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-marketing">
         <span class="text-lg">📣</span> Marketing
       </button>
+      <button onclick="showSection('menu')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-menu">
+        <span class="text-lg">🍽️</span> Menu
+      </button>
+      <button onclick="showSection('staff')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-staff">
+        <span class="text-lg">👥</span> Staff
+      </button>
+      <button onclick="showSection('reports')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-reports">
+        <span class="text-lg">📈</span> Reports
+      </button>
+      <button onclick="showSection('settings')" class="nav-btn w-full flex items-center gap-3 px-6 py-3 text-left text-sm" id="nav-settings">
+        <span class="text-lg">⚙️</span> Settings
+      </button>
     </nav>
     <div class="p-4 border-t border-white/10">
       <div class="flex items-center justify-between text-xs text-gray-500">
@@ -539,6 +551,259 @@
         </div>
       </div>
     </section>
+
+    <!-- ═══════════════════════════════════════════════
+         MENU MANAGEMENT
+    ═══════════════════════════════════════════════ -->
+    <section id="section-menu" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">🍽️ Menu Management</h1>
+        <div class="flex gap-3">
+          <button onclick="openMenuItemModal()" class="bg-green-500/20 hover:bg-green-500/30 text-green-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Add Item</button>
+          <button onclick="openMenuCategoryModal()" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Category</button>
+        </div>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="flex gap-2 flex-wrap" id="menu-category-tabs">
+        <button onclick="filterMenuByCategory('all')" class="menu-cat-tab active bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold" data-cat="all">All Items</button>
+      </div>
+
+      <!-- Menu stats -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-orange-500">
+          <div class="text-xs text-gray-400 font-bold">Total Items</div>
+          <div class="text-2xl font-black text-white mt-1" id="menu-total">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Available</div>
+          <div class="text-2xl font-black text-green-400 mt-1" id="menu-available">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold">Unavailable</div>
+          <div class="text-2xl font-black text-red-400 mt-1" id="menu-unavailable">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Featured</div>
+          <div class="text-2xl font-black text-yellow-400 mt-1" id="menu-featured">--</div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="flex gap-3">
+        <input type="text" id="menu-search" placeholder="Search menu items..." oninput="renderMenuItems()"
+          class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50">
+      </div>
+
+      <!-- Items grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="menu-items-grid"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         STAFF MANAGEMENT
+    ═══════════════════════════════════════════════ -->
+    <section id="section-staff" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">👥 Staff & Scheduling</h1>
+        <button onclick="openStaffModal()" class="bg-green-500/20 hover:bg-green-500/30 text-green-400 px-4 py-2 rounded-xl font-bold text-sm transition-colors">+ Add Employee</button>
+      </div>
+
+      <!-- Labor cost summary -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Active Employees</div>
+          <div class="text-2xl font-black text-white mt-1" id="staff-total">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-purple-500">
+          <div class="text-xs text-gray-400 font-bold">Total Labor Cost</div>
+          <div class="text-2xl font-black text-purple-400 mt-1" id="staff-labor-cost">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Total Hours</div>
+          <div class="text-2xl font-black text-yellow-400 mt-1" id="staff-total-hours">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Hourly Rate</div>
+          <div class="text-2xl font-black text-green-400 mt-1" id="staff-avg-rate">--</div>
+        </div>
+      </div>
+
+      <!-- Schedule week picker -->
+      <div class="flex items-center gap-4">
+        <button onclick="changeScheduleWeek(-1)" class="bg-white/5 hover:bg-white/10 text-white px-3 py-2 rounded-xl text-sm">← Prev</button>
+        <span class="text-white font-bold" id="schedule-week-label">Week of Jun 2</span>
+        <button onclick="changeScheduleWeek(1)" class="bg-white/5 hover:bg-white/10 text-white px-3 py-2 rounded-xl text-sm">Next →</button>
+        <button onclick="openShiftModal()" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-2 rounded-xl font-bold text-sm ml-auto">+ Add Shift</button>
+      </div>
+
+      <!-- Weekly schedule grid -->
+      <div class="stat-card rounded-2xl p-5 overflow-x-auto">
+        <div class="flex gap-2 min-w-[700px]" id="schedule-grid"></div>
+      </div>
+
+      <!-- Employee list -->
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">All Employees</div>
+        <div class="space-y-3" id="staff-list"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         REPORTS
+    ═══════════════════════════════════════════════ -->
+    <section id="section-reports" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-black text-white">📈 Reports & Analytics</h1>
+        <div class="flex gap-2">
+          <button onclick="exportReportCSV()" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Period selector -->
+      <div class="flex gap-2">
+        <button onclick="setReportPeriod('7')" class="report-period-btn active bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-bold" data-days="7">7 Days</button>
+        <button onclick="setReportPeriod('14')" class="report-period-btn bg-white/5 text-gray-400 px-4 py-2 rounded-xl text-sm font-bold" data-days="14">14 Days</button>
+        <button onclick="setReportPeriod('30')" class="report-period-btn bg-white/5 text-gray-400 px-4 py-2 rounded-xl text-sm font-bold" data-days="30">30 Days</button>
+      </div>
+
+      <!-- Revenue summary -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">Total Revenue</div>
+          <div class="text-2xl font-black text-green-400 mt-1" id="rpt-total-rev">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Total Orders</div>
+          <div class="text-2xl font-black text-white mt-1" id="rpt-total-orders">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-purple-500">
+          <div class="text-xs text-gray-400 font-bold">Avg Order Value</div>
+          <div class="text-2xl font-black text-purple-400 mt-1" id="rpt-avg-order">--</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-orange-500">
+          <div class="text-xs text-gray-400 font-bold">Est. Net Profit</div>
+          <div class="text-2xl font-black text-orange-400 mt-1" id="rpt-net-profit">--</div>
+        </div>
+      </div>
+
+      <!-- Daily revenue chart -->
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Daily Revenue</div>
+        <canvas id="reportRevenueChart" height="80"></canvas>
+      </div>
+
+      <!-- Platform breakdown -->
+      <div class="grid grid-cols-4 gap-4">
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
+          <div class="text-xs text-gray-400 font-bold">In-Store (POS)</div>
+          <div class="text-xl font-black text-green-400 mt-1" id="rpt-pos-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-pos-pct">-- of total</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-red-500">
+          <div class="text-xs text-gray-400 font-bold">DoorDash</div>
+          <div class="text-xl font-black text-red-400 mt-1" id="rpt-dd-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-dd-pct">-- of total</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
+          <div class="text-xs text-gray-400 font-bold">Uber Eats</div>
+          <div class="text-xl font-black text-blue-400 mt-1" id="rpt-ue-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-ue-pct">-- of total</div>
+        </div>
+        <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
+          <div class="text-xs text-gray-400 font-bold">Grubhub</div>
+          <div class="text-xl font-black text-yellow-400 mt-1" id="rpt-gh-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-gh-pct">-- of total</div>
+        </div>
+      </div>
+
+      <!-- Top items -->
+      <div class="stat-card rounded-2xl p-5">
+        <div class="font-bold text-white mb-4">Top Selling Items</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="text-gray-400 text-xs uppercase tracking-wider border-b border-white/10">
+              <th class="text-left p-2">Item</th><th class="text-right p-2">Orders</th><th class="text-right p-2">Revenue</th><th class="text-right p-2">Margin</th></tr>
+            </thead>
+            <tbody id="rpt-top-items"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SETTINGS
+    ═══════════════════════════════════════════════ -->
+    <section id="section-settings" class="hidden space-y-6">
+      <h1 class="text-2xl font-black text-white">⚙️ Settings</h1>
+
+      <!-- General -->
+      <div class="stat-card rounded-2xl p-6">
+        <div class="font-bold text-white mb-4 flex items-center gap-2">🏠 Restaurant Info</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Restaurant Name</label>
+            <input type="text" id="set-restaurant-name" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="Restaurant name">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Phone</label>
+            <input type="text" id="set-restaurant-phone" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="(555) 000-0000">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Address</label>
+            <input type="text" id="set-restaurant-address" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="123 Main St, City, ST 00000">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Tax Rate (%)</label>
+            <input type="number" step="0.001" id="set-tax-rate" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1" placeholder="6.625">
+          </div>
+        </div>
+        <button onclick="saveRestaurantSettings()" class="mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-6 py-2 rounded-xl font-bold text-sm transition-colors">Save Info</button>
+      </div>
+
+      <!-- Hours -->
+      <div class="stat-card rounded-2xl p-6">
+        <div class="font-bold text-white mb-4 flex items-center gap-2">🕐 Hours of Operation</div>
+        <div class="space-y-2" id="set-hours"></div>
+        <button onclick="saveHours()" class="mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-6 py-2 rounded-xl font-bold text-sm transition-colors">Save Hours</button>
+      </div>
+
+      <!-- Platform Commissions -->
+      <div class="stat-card rounded-2xl p-6">
+        <div class="font-bold text-white mb-4">💸 Platform Commission Rates</div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">DoorDash %</label>
+            <input type="number" step="0.1" id="set-dd-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="30">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Uber Eats %</label>
+            <input type="number" step="0.1" id="set-ue-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="30">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Grubhub %</label>
+            <input type="number" step="0.1" id="set-gh-comm" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500/50 mt-1" value="27.5">
+          </div>
+        </div>
+        <button onclick="saveCommissions()" class="mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-6 py-2 rounded-xl font-bold text-sm transition-colors">Save Commissions</button>
+      </div>
+
+      <!-- Toast API -->
+      <div class="stat-card rounded-2xl p-6">
+        <div class="font-bold text-white mb-4">🔑 Toast POS API</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Client ID</label>
+            <input type="password" id="set-toast-client-id" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">Client Secret</label>
+            <input type="password" id="set-toast-client-secret" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
+          </div>
+        </div>
+        <button onclick="saveToastAPI()" class="mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-6 py-2 rounded-xl font-bold text-sm transition-colors">Save API Keys</button>
+      </div>
+    </section>
+
   </main>
 
   <!-- TASK MODAL -->
@@ -663,6 +928,179 @@
         <div class="flex gap-3">
           <button onclick="saveReceipt()" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-lg">Save Receipt</button>
           <button onclick="closeReceiptModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU ITEM MODAL -->
+  <div id="menuItemModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white" id="menuItemModalTitle">🍽️ Add Menu Item</h2>
+        <button onclick="closeMenuItemModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="text-xs text-gray-400 font-bold uppercase">Item Name *</label>
+            <input type="text" id="mi-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Jerk Chicken Platter">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Category</label>
+            <select id="mi-category" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50"></select>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Price ($) *</label>
+            <input type="number" step="0.01" id="mi-price" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="0.00">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Cost ($)</label>
+            <input type="number" step="0.01" id="mi-cost" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="0.00">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Prep Time (min)</label>
+            <input type="number" id="mi-prep" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="15">
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-gray-400 font-bold uppercase">Description</label>
+            <input type="text" id="mi-desc" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Grilled chicken with signature jerk marinade...">
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-gray-400 font-bold uppercase">Allergens</label>
+            <input type="text" id="mi-allergens" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Gluten, Dairy, Nuts">
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-gray-400 font-bold uppercase">Image URL</label>
+            <input type="text" id="mi-image" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="https://...">
+          </div>
+          <div class="flex gap-6">
+            <label class="flex items-center gap-2 text-sm text-white cursor-pointer">
+              <input type="checkbox" id="mi-available" checked class="w-4 h-4 accent-green"> Available
+            </label>
+            <label class="flex items-center gap-2 text-sm text-white cursor-pointer">
+              <input type="checkbox" id="mi-featured" class="w-4 h-4 accent-yellow"> Featured
+            </label>
+          </div>
+        </div>
+        <div class="flex gap-3 justify-end pt-2">
+          <button onclick="closeMenuItemModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm">Cancel</button>
+          <button onclick="saveMenuItem()" class="px-4 py-2 bg-green-500/30 hover:bg-green-500/50 text-green-400 rounded-lg text-sm font-bold">Save Item</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU CATEGORY MODAL -->
+  <div id="menuCategoryModal" class="modal-overlay hidden">
+    <div class="modal-content max-w-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white">📂 Add Category</h2>
+        <button onclick="closeMenuCategoryModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Category Name *</label>
+          <input type="text" id="mc-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Appetizers">
+        </div>
+        <div class="flex gap-3 justify-end pt-2">
+          <button onclick="closeMenuCategoryModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm">Cancel</button>
+          <button onclick="saveMenuCategory()" class="px-4 py-2 bg-blue-500/30 hover:bg-blue-500/50 text-blue-400 rounded-lg text-sm font-bold">Save Category</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAFF MODAL -->
+  <div id="staffModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white" id="staffModalTitle">👤 Add Employee</h2>
+        <button onclick="closeStaffModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Name *</label>
+            <input type="text" id="st-name" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Full name">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Role *</label>
+            <select id="st-role" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
+              <option value="Owner">Owner</option>
+              <option value="Head Chef">Head Chef</option>
+              <option value="Line Cook">Line Cook</option>
+              <option value="Cashier">Cashier</option>
+              <option value="Server">Server</option>
+              <option value="Dishwasher">Dishwasher</option>
+              <option value="Manager">Manager</option>
+              <option value="Delivery Driver">Delivery Driver</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Email</label>
+            <input type="email" id="st-email" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="name@email.com">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Phone</label>
+            <input type="tel" id="st-phone" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="(555) 000-0000">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Hourly Rate ($)</label>
+            <input type="number" step="0.25" id="st-rate" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" placeholder="16.00">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Hire Date</label>
+            <input type="date" id="st-hire-date" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs text-gray-400 font-bold uppercase">Notes</label>
+            <input type="text" id="st-notes" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50" placeholder="Any notes...">
+          </div>
+          <div class="col-span-2">
+            <label class="flex items-center gap-2 text-sm text-white cursor-pointer">
+              <input type="checkbox" id="st-active" checked class="w-4 h-4 accent-green"> Active Employee
+            </label>
+          </div>
+        </div>
+        <div class="flex gap-3 justify-end pt-2">
+          <button onclick="closeStaffModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm">Cancel</button>
+          <button onclick="saveStaff()" class="px-4 py-2 bg-green-500/30 hover:bg-green-500/50 text-green-400 rounded-lg text-sm font-bold">Save Employee</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIFT MODAL -->
+  <div id="shiftModal" class="modal-overlay hidden">
+    <div class="modal-content max-w-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-white">📅 Add Shift</h2>
+        <button onclick="closeShiftModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Employee *</label>
+          <select id="sh-staff-id" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50"></select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 font-bold uppercase">Date *</label>
+          <input type="date" id="sh-date" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">Start *</label>
+            <input type="time" id="sh-start" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" value="09:00">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 font-bold uppercase">End *</label>
+            <input type="time" id="sh-end" class="w-full mt-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500/50" value="17:00">
+          </div>
+        </div>
+        <div class="flex gap-3 justify-end pt-2">
+          <button onclick="closeShiftModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm">Cancel</button>
+          <button onclick="saveShift()" class="px-4 py-2 bg-blue-500/30 hover:bg-blue-500/50 text-blue-400 rounded-lg text-sm font-bold">Save Shift</button>
         </div>
       </div>
     </div>
@@ -914,7 +1352,7 @@
 
     // ─── Navigation ──────────────────────────────────────────────────────────────
     function showSection(name) {
-      ['dashboard','orders','doordash','ubereats','grubhub','pos','tasks','inventory','marketing'].forEach(s => {
+      ['dashboard','orders','doordash','ubereats','grubhub','pos','tasks','inventory','marketing','menu','staff','reports','settings'].forEach(s => {
         document.getElementById('section-'+s)?.classList.add('hidden');
         document.getElementById('nav-'+s)?.classList.remove('active');
       });
@@ -928,6 +1366,10 @@
       if (name === 'orders') fetchOrders();
       if (name === 'tasks') renderTasks();
       if (name === 'inventory') renderInventory();
+      if (name === 'menu') { loadMenuData(); renderMenuItems(); }
+      if (name === 'staff') { loadStaffData(); loadShifts(); }
+      if (name === 'reports') loadReports();
+      if (name === 'settings') loadSettingsForm();
     }
 
     function loadPlatformSection(key, data, ids, listId) {
@@ -1243,7 +1685,7 @@
       win.document.write(`<html><body style="background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0"><img src="${r.image}" style="max-width:90%;max-height:90vh;border-radius:8px"/></body></html>`);
     }
 
-    // ─── Marketing ──────────────────────────────────────────────────────────────
+    // ─── Boot ───────────────────────────────────────────────────────────────────
     function insertPromotion(type) {
       const msgs = {
         LUNCH_SPECIAL: "🍱 LUNCH SPECIAL! 10% off all orders 11am-2pm. Call (908) 686-8178 to order ahead!",
@@ -1269,9 +1711,638 @@
       document.getElementById('campaignMsg').value = '';
     }
 
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MENU MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════════════════
+    let menuCategories = [];
+    let menuItems = [];
+    let editingMenuItemId = null;
+    let activeMenuCategory = 'all';
+
+    async function loadMenuData() {
+      try {
+        const [cats, items] = await Promise.all([
+          fetch('/api/menu/categories').then(r => r.json()).catch(() => []),
+          fetch('/api/menu/items').then(r => r.json()).catch(() => [])
+        ]);
+        menuCategories = cats;
+        menuItems = items;
+        renderMenuCategoryTabs();
+        renderMenuItems();
+      } catch (e) { console.error('Menu load failed', e); }
+    }
+
+    function renderMenuCategoryTabs() {
+      const tabs = document.getElementById('menu-category-tabs');
+      if (!tabs) return;
+      const cats = [{id:'all',name:'All Items'}, ...menuCategories.filter(c => c.active !== false)];
+      tabs.innerHTML = cats.map(c => `
+        <button onclick="filterMenuByCategory('${c.id}')"
+          class="menu-cat-tab ${activeMenuCategory === String(c.id) ? 'active bg-white/10 text-white' : 'bg-white/5 text-gray-400'} px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+          data-cat="${c.id}">${c.name}</button>
+      `).join('');
+    }
+
+    function filterMenuByCategory(cat) {
+      activeMenuCategory = cat;
+      renderMenuCategoryTabs();
+      renderMenuItems();
+    }
+
+    function renderMenuItems() {
+      const search = (document.getElementById('menu-search')?.value || '').toLowerCase();
+      const filtered = menuItems.filter(item => {
+        const matchSearch = item.name.toLowerCase().includes(search);
+        const matchCat = activeMenuCategory === 'all' || String(item.category_id) === String(activeMenuCategory);
+        return matchSearch && matchCat;
+      });
+      const total = menuItems.length;
+      const available = menuItems.filter(i => i.available).length;
+      const unavailable = total - available;
+      const featured = menuItems.filter(i => i.featured).length;
+      const el = id => document.getElementById(id);
+      el('menu-total')?.setAttribute('data-v', total);
+      el('menu-total').textContent = total;
+      el('menu-available').textContent = available;
+      el('menu-unavailable').textContent = unavailable;
+      el('menu-featured').textContent = featured;
+
+      const grid = document.getElementById('menu-items-grid');
+      if (!grid) return;
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="col-span-3 text-center text-gray-500 py-16">
+          <div class="text-4xl mb-3">🍽️</div><div>No menu items yet</div>
+          <div class="text-sm mt-1">Add your first item with the + Add Item button</div></div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(item => {
+        const cat = menuCategories.find(c => String(c.id) === String(item.category_id));
+        const margin = item.cost > 0 ? (((item.price - item.cost) / item.price) * 100).toFixed(0) : '—';
+        return `
+        <div class="stat-card rounded-2xl p-5 ${item.available ? '' : 'opacity-60'}">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-white font-bold text-sm">${item.name}</span>
+                ${item.featured ? '<span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full font-bold">★ Featured</span>' : ''}
+                ${!item.available ? '<span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-bold">Unavailable</span>' : ''}
+              </div>
+              <div class="text-xs text-gray-500 mt-1">${cat ? cat.name : 'Uncategorized'}${item.allergens ? ' · ' + item.allergens : ''}</div>
+              ${item.description ? `<div class="text-xs text-gray-400 mt-1 line-clamp-2">${item.description}</div>` : ''}
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-white font-black text-lg">${fmt(item.price)}</div>
+              ${item.cost > 0 ? `<div class="text-xs text-green-400">${margin}% margin</div>` : ''}
+              ${item.prep_time_minutes ? `<div class="text-xs text-gray-500">⏱ ${item.prep_time_minutes}min</div>` : ''}
+            </div>
+          </div>
+          <div class="flex gap-2 mt-3 pt-3 border-t border-white/5">
+            <button onclick="toggleMenuItemAvailability(${item.id}, ${!item.available})"
+              class="text-xs ${item.available ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'} px-3 py-1 rounded-lg font-bold transition-colors">
+              ${item.available ? 'Mark Unavailable' : 'Mark Available'}
+            </button>
+            <button onclick="editMenuItem(${item.id})" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-lg transition-colors">Edit</button>
+            <button onclick="deleteMenuItem(${item.id})" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1 rounded-lg transition-colors">Delete</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function openMenuItemModal(id) {
+      editingMenuItemId = id;
+      const sel = document.getElementById('mi-category');
+      if (sel) {
+        sel.innerHTML = menuCategories.filter(c => c.active !== false).map(c =>
+          `<option value="${c.id}">${c.name}</option>`).join('');
+      }
+      if (id) {
+        const item = menuItems.find(i => i.id === id);
+        if (item) {
+          document.getElementById('menuItemModalTitle').textContent = '🍽️ Edit Menu Item';
+          document.getElementById('mi-name').value = item.name || '';
+          document.getElementById('mi-category').value = item.category_id || '';
+          document.getElementById('mi-price').value = item.price || '';
+          document.getElementById('mi-cost').value = item.cost || '';
+          document.getElementById('mi-prep').value = item.prep_time_minutes || '';
+          document.getElementById('mi-desc').value = item.description || '';
+          document.getElementById('mi-allergens').value = item.allergens || '';
+          document.getElementById('mi-image').value = item.image_url || '';
+          document.getElementById('mi-available').checked = item.available !== false;
+          document.getElementById('mi-featured').checked = item.featured || false;
+        }
+      } else {
+        document.getElementById('menuItemModalTitle').textContent = '🍽️ Add Menu Item';
+        ['mi-name','mi-price','mi-cost','mi-prep','mi-desc','mi-allergens','mi-image'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('mi-available').checked = true;
+        document.getElementById('mi-featured').checked = false;
+      }
+      document.getElementById('menuItemModal').classList.remove('hidden');
+    }
+
+    function closeMenuItemModal() {
+      document.getElementById('menuItemModal').classList.add('hidden');
+      editingMenuItemId = null;
+    }
+
+    async function saveMenuItem() {
+      const name = document.getElementById('mi-name').value.trim();
+      const price = parseFloat(document.getElementById('mi-price').value);
+      if (!name || isNaN(price)) { alert('Name and price are required'); return; }
+      const payload = {
+        name, price,
+        category_id: document.getElementById('mi-category').value || null,
+        cost: parseFloat(document.getElementById('mi-cost').value) || 0,
+        description: document.getElementById('mi-desc').value.trim(),
+        allergens: document.getElementById('mi-allergens').value.trim(),
+        image_url: document.getElementById('mi-image').value.trim(),
+        prep_time_minutes: parseInt(document.getElementById('mi-prep').value) || null,
+        available: document.getElementById('mi-available').checked,
+        featured: document.getElementById('mi-featured').checked
+      };
+      try {
+        const url = editingMenuItemId ? `/api/menu/items/${editingMenuItemId}` : '/api/menu/items';
+        const method = editingMenuItemId ? 'PUT' : 'POST';
+        const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!r.ok) throw new Error(await r.text());
+        closeMenuItemModal();
+        await loadMenuData();
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function toggleMenuItemAvailability(id, available) {
+      try {
+        await fetch(`/api/menu/items/${id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ available })
+        });
+        await loadMenuData();
+      } catch (e) { alert('Update failed: ' + e.message); }
+    }
+
+    function editMenuItem(id) { openMenuItemModal(id); }
+
+    async function deleteMenuItem(id) {
+      if (!confirm('Delete this menu item?')) return;
+      try {
+        await fetch(`/api/menu/items/${id}`, { method: 'DELETE' });
+        await loadMenuData();
+      } catch (e) { alert('Delete failed: ' + e.message); }
+    }
+
+    function openMenuCategoryModal() {
+      document.getElementById('mc-name').value = '';
+      document.getElementById('menuCategoryModal').classList.remove('hidden');
+    }
+    function closeMenuCategoryModal() { document.getElementById('menuCategoryModal').classList.add('hidden'); }
+
+    async function saveMenuCategory() {
+      const name = document.getElementById('mc-name').value.trim();
+      if (!name) { alert('Category name required'); return; }
+      try {
+        await fetch('/api/menu/categories', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        closeMenuCategoryModal();
+        await loadMenuData();
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STAFF MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════════════════
+    let staffList = [];
+    let shiftsList = [];
+    let editingStaffId = null;
+    let scheduleWeekOffset = 0;
+
+    async function loadStaffData() {
+      try {
+        staffList = await fetch('/api/staff').then(r => r.json()).catch(() => []);
+        renderStaffList();
+        renderLaborSummary();
+        populateShiftStaffSelect();
+      } catch (e) { console.error('Staff load failed', e); }
+    }
+
+    async function loadShifts() {
+      try {
+        const d = getScheduleWeekDates();
+        shiftsList = await fetch(`/api/shifts?start=${d.monday}&end=${d.sunday}`).then(r => r.json()).catch(() => []);
+        renderScheduleGrid();
+      } catch (e) { console.error('Shifts load failed', e); }
+    }
+
+    function getScheduleWeekDates() {
+      const mon = new Date();
+      mon.setDate(mon.getDate() - mon.getDay() + 1 + scheduleWeekOffset * 7);
+      const sun = new Date(mon);
+      sun.setDate(mon.getDate() + 6);
+      const fmt = d => d.toISOString().split('T')[0];
+      return { monday: fmt(mon), sunday: fmt(sun), mondayDate: mon };
+    }
+
+    function changeScheduleWeek(dir) {
+      scheduleWeekOffset += dir;
+      loadShifts();
+      const d = getScheduleWeekDates();
+      const label = document.getElementById('schedule-week-label');
+      if (label) label.textContent = `Week of ${d.mondayDate.toLocaleDateString('en-US', {month:'short',day:'numeric'})}`;
+    }
+
+    function renderScheduleGrid() {
+      const d = getScheduleWeekDates();
+      const label = document.getElementById('schedule-week-label');
+      if (label) label.textContent = `Week of ${d.mondayDate.toLocaleDateString('en-US', {month:'short',day:'numeric'})}`;
+
+      const grid = document.getElementById('schedule-grid');
+      if (!grid) return;
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const dt = new Date(d.mondayDate);
+        dt.setDate(d.mondayDate.getDate() + i);
+        dates.push(dt);
+      }
+
+      grid.innerHTML = days.map((day, i) => {
+        const dayShifts = shiftsList.filter(s => s.shift_date === dates[i].toISOString().split('T')[0]);
+        return `
+        <div class="flex-1 min-w-[90px]">
+          <div class="text-center text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">${day}</div>
+          <div class="space-y-1">
+            ${dayShifts.length === 0 ? `<div class="text-center text-gray-600 text-xs py-4">—</div>` :
+              dayShifts.map(s => `
+              <div class="bg-white/5 rounded-lg p-2 text-xs cursor-pointer hover:bg-white/10 transition-colors"
+                   onclick="deleteShift(${s.id})" title="Click to delete">
+                <div class="text-white font-bold truncate">${s.staff_name || 'Staff'}</div>
+                <div class="text-gray-400">${s.start_time?.slice(0,5)}–${s.end_time?.slice(0,5)}</div>
+                ${s.role ? `<div class="text-gray-500 truncate">${s.role}</div>` : ''}
+              </div>`).join('')
+            }
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderStaffList() {
+      const el = document.getElementById('staff-list');
+      if (!el) return;
+      if (!staffList.length) {
+        el.innerHTML = `<div class="text-center text-gray-500 py-8"><div class="text-3xl mb-2">👥</div><div>No employees yet</div></div>`;
+        return;
+      }
+      const roleColors = { Owner:'text-purple-400', Manager:'text-blue-400', 'Head Chef':'text-orange-400', 'Line Cook':'text-red-400', Cashier:'text-green-400', Server:'text-yellow-400' };
+      el.innerHTML = staffList.map(s => `
+        <div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl hover:bg-white/8 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-lg">${s.role?.charAt(0)||'?'}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-white font-bold text-sm">${s.name}</span>
+              ${!s.active ? '<span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">Inactive</span>' : ''}
+            </div>
+            <div class="text-xs ${roleColors[s.role]||'text-gray-400'} mt-0.5">${s.role || 'Unknown role'}</div>
+            ${s.email ? `<div class="text-xs text-gray-500 mt-0.5">${s.email}</div>` : ''}
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-white font-bold text-sm">${fmt(s.hourly_rate || 0)}/hr</div>
+            ${s.hire_date ? `<div class="text-xs text-gray-500 mt-0.5">Since ${df(s.hire_date)}</div>` : ''}
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editStaff(${s.id})" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-lg">Edit</button>
+            <button onclick="deleteStaff(${s.id})" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1 rounded-lg">Del</button>
+          </div>
+        </div>`).join('');
+    }
+
+    async function renderLaborSummary() {
+      try {
+        const d = getScheduleWeekDates();
+        const labor = await fetch(`/api/staff/labor?start=${d.monday}&end=${d.sunday}`).then(r => r.json()).catch(() => []);
+        const totalCost = labor.reduce((s, e) => s + parseFloat(e.total_cost || 0), 0);
+        const totalHours = labor.reduce((s, e) => s + parseFloat(e.total_hours || 0), 0);
+        const avgRate = labor.length ? labor.reduce((s, e) => s + parseFloat(e.hourly_rate || 0), 0) / labor.length : 0;
+        const el = id => document.getElementById(id);
+        el('staff-total').textContent = staffList.filter(s => s.active).length;
+        el('staff-labor-cost').textContent = fmt(totalCost);
+        el('staff-total-hours').textContent = totalHours.toFixed(1) + 'h';
+        el('staff-avg-rate').textContent = fmt(avgRate) + '/hr';
+      } catch (e) { console.error('Labor summary failed', e); }
+    }
+
+    function openStaffModal(id) {
+      editingStaffId = id;
+      if (id) {
+        const s = staffList.find(x => x.id === id);
+        if (s) {
+          document.getElementById('staffModalTitle').textContent = '👤 Edit Employee';
+          document.getElementById('st-name').value = s.name || '';
+          document.getElementById('st-role').value = s.role || 'Other';
+          document.getElementById('st-email').value = s.email || '';
+          document.getElementById('st-phone').value = s.phone || '';
+          document.getElementById('st-rate').value = s.hourly_rate || '';
+          document.getElementById('st-hire-date').value = s.hire_date || '';
+          document.getElementById('st-notes').value = s.notes || '';
+          document.getElementById('st-active').checked = s.active !== false;
+        }
+      } else {
+        document.getElementById('staffModalTitle').textContent = '👤 Add Employee';
+        ['st-name','st-email','st-phone','st-rate','st-hire-date','st-notes'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('st-active').checked = true;
+      }
+      document.getElementById('staffModal').classList.remove('hidden');
+    }
+
+    function closeStaffModal() { document.getElementById('staffModal').classList.add('hidden'); editingStaffId = null; }
+
+    async function saveStaff() {
+      const name = document.getElementById('st-name').value.trim();
+      const role = document.getElementById('st-role').value;
+      if (!name || !role) { alert('Name and role are required'); return; }
+      const payload = {
+        name, role,
+        email: document.getElementById('st-email').value.trim(),
+        phone: document.getElementById('st-phone').value.trim(),
+        hourly_rate: parseFloat(document.getElementById('st-rate').value) || 0,
+        hire_date: document.getElementById('st-hire-date').value || null,
+        notes: document.getElementById('st-notes').value.trim(),
+        active: document.getElementById('st-active').checked
+      };
+      try {
+        const url = editingStaffId ? `/api/staff/${editingStaffId}` : '/api/staff';
+        const method = editingStaffId ? 'PUT' : 'POST';
+        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        closeStaffModal();
+        await loadStaffData();
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    function editStaff(id) { openStaffModal(id); }
+
+    async function deleteStaff(id) {
+      if (!confirm('Delete this employee?')) return;
+      try {
+        await fetch(`/api/staff/${id}`, { method: 'DELETE' });
+        await loadStaffData();
+      } catch (e) { alert('Delete failed: ' + e.message); }
+    }
+
+    function populateShiftStaffSelect() {
+      const sel = document.getElementById('sh-staff-id');
+      if (!sel) return;
+      sel.innerHTML = staffList.filter(s => s.active).map(s =>
+        `<option value="${s.id}">${s.name} (${s.role})</option>`).join('');
+    }
+
+    function openShiftModal() {
+      const d = getScheduleWeekDates();
+      document.getElementById('sh-date').value = d.monday;
+      document.getElementById('sh-start').value = '09:00';
+      document.getElementById('sh-end').value = '17:00';
+      document.getElementById('shiftModal').classList.remove('hidden');
+    }
+    function closeShiftModal() { document.getElementById('shiftModal').classList.add('hidden'); }
+
+    async function saveShift() {
+      const staff_id = document.getElementById('sh-staff-id').value;
+      const shift_date = document.getElementById('sh-date').value;
+      const start_time = document.getElementById('sh-start').value;
+      const end_time = document.getElementById('sh-end').value;
+      if (!staff_id || !shift_date || !start_time || !end_time) { alert('All fields required'); return; }
+      try {
+        await fetch('/api/shifts', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ staff_id: parseInt(staff_id), shift_date, start_time, end_time })
+        });
+        closeShiftModal();
+        await loadShifts();
+        await renderLaborSummary();
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function deleteShift(id) {
+      if (!confirm('Delete this shift?')) return;
+      try {
+        await fetch(`/api/shifts/${id}`, { method: 'DELETE' });
+        await loadShifts();
+        await renderLaborSummary();
+      } catch (e) { alert('Delete failed: ' + e.message); }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // REPORTS
+    // ═══════════════════════════════════════════════════════════════════════════
+    let reportChart = null;
+    let currentReportDays = '7';
+
+    async function loadReports() {
+      try {
+        const [sales, topItems, profit] = await Promise.all([
+          fetch(`/api/reports/sales?days=${currentReportDays}`).then(r => r.json()).catch(() => []),
+          fetch('/api/reports/top-items').then(r => r.json()).catch(() => []),
+          fetch('/api/reports/profit').then(r => r.json()).catch(() => ({}))
+        ]);
+
+        // Summary
+        const totalRev = sales.reduce((s, d) => s + d.total, 0);
+        const totalOrd = sales.reduce((s, d) => s + d.orders, 0);
+        const avgOrd = totalOrd > 0 ? totalRev / totalOrd : 0;
+        document.getElementById('rpt-total-rev').textContent = fmt(totalRev);
+        document.getElementById('rpt-total-orders').textContent = totalOrd;
+        document.getElementById('rpt-avg-order').textContent = fmt(avgOrd);
+        document.getElementById('rpt-net-profit').textContent = fmt(profit.net_profit || 0);
+
+        // Platform breakdown
+        const posRev = sales.reduce((s, d) => s + d.pos, 0);
+        const ddRev  = sales.reduce((s, d) => s + d.doordash, 0);
+        const ueRev  = sales.reduce((s, d) => s + d.ubereats, 0);
+        const ghRev  = sales.reduce((s, d) => s + d.grubhub, 0);
+        const set = (id, val, total) => {
+          document.getElementById(id).textContent = fmt(val);
+          const pct = totalRev > 0 ? ((val / totalRev) * 100).toFixed(0) + '% of total' : '-- of total';
+          document.getElementById(id.replace('rev','pct')).textContent = pct;
+        };
+        set('rpt-pos-rev', posRev);
+        set('rpt-dd-rev', ddRev);
+        set('rpt-ue-rev', ueRev);
+        set('rpt-gh-rev', ghRev);
+
+        // Chart
+        if (reportChart) reportChart.destroy();
+        const ctx = document.getElementById('reportRevenueChart')?.getContext('2d');
+        if (ctx) {
+          reportChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: sales.map(d => {
+                const dt = new Date(d.date + 'T00:00:00');
+                return dt.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+              }),
+              datasets: [
+                { label: 'In-Store', data: sales.map(d => d.pos), backgroundColor: 'rgba(81,207,102,0.7)', borderRadius: 4 },
+                { label: 'DoorDash', data: sales.map(d => d.doordash), backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 4 },
+                { label: 'UberEats', data: sales.map(d => d.ubereats), backgroundColor: 'rgba(51,138,255,0.7)', borderRadius: 4 },
+                { label: 'Grubhub', data: sales.map(d => d.grubhub), backgroundColor: 'rgba(255,212,59,0.7)', borderRadius: 4 }
+              ]
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { position: 'bottom', labels: { color: '#888', padding: 20 } } },
+              scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888' } },
+                x: { grid: { display: false }, ticks: { color: '#888' } }
+              }
+            }
+          });
+        }
+
+        // Top items
+        const tbody = document.getElementById('rpt-top-items');
+        if (tbody) {
+          if (!topItems.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No data yet</td></tr>';
+          } else {
+            tbody.innerHTML = topItems.slice(0, 10).map(item => `
+              <tr class="border-b border-white/5 hover:bg-white/5">
+                <td class="p-2 text-white text-sm">${item.name}</td>
+                <td class="p-2 text-right text-gray-400 text-sm">${item.count || 0}</td>
+                <td class="p-2 text-right text-white font-bold text-sm">${fmt(item.revenue || 0)}</td>
+                <td class="p-2 text-right text-sm ${(item.margin_pct || 0) > 60 ? 'text-green-400' : (item.margin_pct || 0) > 40 ? 'text-yellow-400' : 'text-red-400'}">${item.margin_pct || '--'}%</td>
+              </tr>`).join('');
+          }
+        }
+      } catch (e) { console.error('Reports load failed', e); }
+    }
+
+    function setReportPeriod(days) {
+      currentReportDays = days;
+      document.querySelectorAll('.report-period-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.days === days);
+        b.classList.toggle('bg-white/10', b.dataset.days === days);
+        b.classList.toggle('text-white', b.dataset.days === days);
+        b.classList.toggle('bg-white/5', b.dataset.days !== days);
+        b.classList.toggle('text-gray-400', b.dataset.days !== days);
+      });
+      loadReports();
+    }
+
+    function exportReportCSV() {
+      fetch(`/api/reports/sales?days=${currentReportDays}`)
+        .then(r => r.json())
+        .then(sales => {
+          const header = 'Date,POS,DoorDash,UberEats,Grubhub,Total,Orders\n';
+          const rows = sales.map(d => `${d.date},${d.pos},${d.doordash},${d.ubereats},${d.grubhub},${d.total},${d.orders}`).join('\n');
+          const blob = new Blob([header + rows], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `sales-report-${new Date().toISOString().split('T')[0]}.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════════════════════════════════════
+    async function loadSettingsForm() {
+      try {
+        const settings = await fetch('/api/settings').then(r => r.json()).catch(() => ({}));
+        const v = k => settings[k];
+        if (document.getElementById('set-restaurant-name')) document.getElementById('set-restaurant-name').value = v('restaurant_name') || '';
+        if (document.getElementById('set-restaurant-phone')) document.getElementById('set-restaurant-phone').value = v('restaurant_phone') || '';
+        if (document.getElementById('set-restaurant-address')) document.getElementById('set-restaurant-address').value = v('restaurant_address')?.address || '';
+        if (document.getElementById('set-tax-rate')) document.getElementById('set-tax-rate').value = (v('tax_rate') || 0) * 100;
+        if (document.getElementById('set-dd-comm')) document.getElementById('set-dd-comm').value = (v('doordash_commission') || 0.30) * 100;
+        if (document.getElementById('set-ue-comm')) document.getElementById('set-ue-comm').value = (v('ubereats_commission') || 0.30) * 100;
+        if (document.getElementById('set-gh-comm')) document.getElementById('set-gh-comm').value = (v('grubhub_commission') || 0.275) * 100;
+        if (document.getElementById('set-toast-client-id')) document.getElementById('set-toast-client-id').value = v('toast_client_id') || '';
+        renderHoursEditor(settings.hours || {});
+      } catch (e) { console.error('Settings load failed', e); }
+    }
+
+    function renderHoursEditor(hours) {
+      const el = document.getElementById('set-hours');
+      if (!el) return;
+      const days = ['mon','tue','wed','thu','fri','sat','sun'];
+      const labels = { mon:'Monday', tue:'Tuesday', wed:'Wednesday', thu:'Thursday', fri:'Friday', sat:'Saturday', sun:'Sunday' };
+      el.innerHTML = days.map(day => {
+        const slots = hours[day] || [{ open: '11:00', close: '22:00' }];
+        const slot = slots[0] || { open: '11:00', close: '22:00' };
+        return `
+        <div class="flex items-center gap-4 py-2 border-b border-white/5">
+          <div class="w-28 text-white font-bold text-sm">${labels[day]}</div>
+          <input type="time" id="hrs-${day}-open" value="${slot.open}" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-white text-sm">
+          <span class="text-gray-500">to</span>
+          <input type="time" id="hrs-${day}-close" value="${slot.close}" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-white text-sm">
+        </div>`;
+      }).join('');
+    }
+
+    async function saveRestaurantSettings() {
+      try {
+        await Promise.all([
+          saveSetting('restaurant_name', document.getElementById('set-restaurant-name').value),
+          saveSetting('restaurant_phone', document.getElementById('set-restaurant-phone').value),
+          saveSetting('tax_rate', parseFloat(document.getElementById('set-tax-rate').value) / 100 || 0)
+        ]);
+        alert('Restaurant info saved!');
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function saveHours() {
+      const days = ['mon','tue','wed','thu','fri','sat','sun'];
+      const hours = {};
+      days.forEach(day => {
+        hours[day] = [{
+          open: document.getElementById(`hrs-${day}-open`).value,
+          close: document.getElementById(`hrs-${day}-close`).value
+        }];
+      });
+      try {
+        await saveSetting('hours', hours);
+        alert('Hours saved!');
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function saveCommissions() {
+      try {
+        await Promise.all([
+          saveSetting('doordash_commission', parseFloat(document.getElementById('set-dd-comm').value) / 100 || 0.30),
+          saveSetting('ubereats_commission', parseFloat(document.getElementById('set-ue-comm').value) / 100 || 0.30),
+          saveSetting('grubhub_commission', parseFloat(document.getElementById('set-gh-comm').value) / 100 || 0.275)
+        ]);
+        alert('Commissions saved!');
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function saveToastAPI() {
+      try {
+        await Promise.all([
+          saveSetting('toast_client_id', document.getElementById('set-toast-client-id').value),
+          saveSetting('toast_client_secret', document.getElementById('set-toast-client-secret').value)
+        ]);
+        alert('Toast API keys saved!');
+      } catch (e) { alert('Save failed: ' + e.message); }
+    }
+
+    async function saveSetting(key, value) {
+      await fetch(`/api/settings/${encodeURIComponent(key)}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value })
+      });
+    }
+
+    async function loadSettingsData() {
+      // Load settings into memory on boot for use elsewhere
+    }
+
     // ─── Boot ───────────────────────────────────────────────────────────────────
     fetchAll();
     setInterval(fetchAll, 60000);
+    loadMenuData();
+    loadStaffData();
+    loadSettingsData();
   </script>
 </body>
 </html>
