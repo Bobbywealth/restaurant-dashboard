@@ -1207,7 +1207,11 @@
     function getDateStr(isToday) {
       const d = new Date();
       if (!isToday) { d.setDate(d.getDate() - 1); }
-      return d.toISOString().split('T')[0].replace(/-/g, '');
+      // Use LOCAL date, not UTC (avoid off-by-one at midnight)
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}${mm}${dd}`;
     }
 
     async function fetchAll() {
@@ -1326,22 +1330,45 @@
     async function fetchOrders() {
       const date = document.getElementById('ordersDateFilter').value;
       const dateStr = getDateStr(date === 'today');
+      const plat = document.getElementById('ordersPlatform').value;
 
       let data = [];
       if (plat === 'all') {
-        const pos = generateMockData('toast_pos', dateStr);
-        const dd  = generateMockData('doordash', dateStr);
-        const ue  = generateMockData('ubereats', dateStr);
-        const gh  = generateMockData('grubhub', dateStr);
-        data = [
-          ...pos.orders.map(o => ({...o, _source:'toast_pos', _id:o.orderId})),
-          ...dd.orders.map(o => ({...o, _source:'doordash', _id:o.orderId})),
-          ...ue.orders.map(o => ({...o, _source:'ubereats', _id:o.orderId})),
-          ...gh.orders.map(o => ({...o, _source:'grubhub', _id:o.orderId}))
-        ];
+        try {
+          const [pos, dd, ue, gh] = await Promise.all([
+            fetch(`/api/pos/${date}`).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch(`/api/doordash/${date}`).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch(`/api/ubereats/${date}`).then(r => r.ok ? r.json() : null).catch(() => null),
+            fetch(`/api/grubhub/${date}`).then(r => r.ok ? r.json() : null).catch(() => null)
+          ]);
+          const all = [pos, dd, ue, gh].filter(Boolean);
+          data = all.flatMap(d => (d.orders || []).map(o => ({...o, _source: d.source, _id: o.orderId || o.id})));
+          if (!data.length) throw new Error('empty');
+        } catch (e) {
+          // Fallback to mock data if API returns nothing
+          const posM = generateMockData('toast_pos', dateStr);
+          const ddM  = generateMockData('doordash', dateStr);
+          const ueM  = generateMockData('ubereats', dateStr);
+          const ghM  = generateMockData('grubhub', dateStr);
+          data = [
+            ...posM.orders.map(o => ({...o, _source:'toast_pos', _id:o.orderId})),
+            ...ddM.orders.map(o => ({...o, _source:'doordash', _id:o.orderId})),
+            ...ueM.orders.map(o => ({...o, _source:'ubereats', _id:o.orderId})),
+            ...ghM.orders.map(o => ({...o, _source:'grubhub', _id:o.orderId}))
+          ];
+        }
       } else {
-        const d = generateMockData(plat, dateStr);
-        data = d.orders.map(o => ({...o, _source:plat, _id:o.orderId}));
+        try {
+          const r = await fetch(`/api/${plat}/${date}`);
+          if (r.ok) {
+            const d = await r.json();
+            data = (d.orders || []).map(o => ({...o, _source: d.source || plat, _id: o.orderId || o.id}));
+            if (!data.length) throw new Error('empty');
+          } else { throw new Error('non-200'); }
+        } catch (e) {
+          const d = generateMockData(plat, dateStr);
+          data = d.orders.map(o => ({...o, _source:plat, _id:o.orderId}));
+        }
       }
 
       const tbody = document.getElementById('ordersTable');
