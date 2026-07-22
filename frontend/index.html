@@ -55,7 +55,7 @@
 </head>
 <body>
   <!-- SIDEBAR -->
-  <aside class="fixed left-0 top-0 h-full w-64 bg-white z-50 flex flex-col">
+  <aside id="sidebar" aria-label="Primary navigation" class="fixed left-0 top-0 h-full w-64 bg-white z-50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
     <div class="p-6 border-b border-gray-200">
       <div class="flex items-center gap-3">
         <img src="https://i.imgur.com/DxGqSoz.png" class="w-20 h-20 rounded-xl object-cover" alt="Top Taste Logo" />
@@ -109,18 +109,35 @@
     </div>
   </aside>
 
+  <!-- MOBILE SIDEBAR BACKDROP -->
+  <div id="sidebar-backdrop" onclick="closeSidebar()" aria-hidden="true" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
+
+  <!-- MOBILE TOP BAR -->
+  <header class="md:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+    <button id="sidebar-toggle" type="button" onclick="toggleSidebar()" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false" class="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="flex items-center gap-2 min-w-0">
+      <img src="https://i.imgur.com/DxGqSoz.png" class="w-8 h-8 rounded-lg object-cover" alt="" />
+      <div class="min-w-0">
+        <div class="font-bold text-sm text-[#1a1a1a] truncate">Top Taste</div>
+        <div class="text-[11px] text-gray-500 truncate">Command Center</div>
+      </div>
+    </div>
+  </header>
+
   <!-- MAIN CONTENT -->
-  <main class="ml-64 min-h-screen p-6 bg-[#f8f7f4]">
+  <main class="ml-0 md:ml-64 min-h-screen p-4 md:p-6 bg-[#f8f7f4]">
 
     <!-- DASHBOARD -->
     <section id="section-dashboard" class="space-y-6">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 class="text-2xl font-black text-[#1a1a1a]">Dashboard</h1>
           <p class="text-gray-600 text-sm mt-1" id="dateLabel"></p>
         </div>
-        <div class="flex gap-3">
-          <select id="dateFilter" onchange="fetchAll()">
+        <div class="flex flex-wrap gap-2">
+          <select id="dateFilter" onchange="fetchAll()" class="text-sm">
             <option value="today">Today</option>
             <option value="yesterday">Yesterday</option>
           </select>
@@ -534,7 +551,7 @@
       </div>
 
       <!-- Menu stats -->
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-orange-500">
           <div class="text-xs text-gray-600 font-bold">Total Items</div>
           <div class="text-2xl font-black text-white mt-1" id="menu-total">--</div>
@@ -573,7 +590,7 @@
       </div>
 
       <!-- Labor cost summary -->
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
           <div class="text-xs text-gray-600 font-bold">Active Employees</div>
           <div class="text-2xl font-black text-white mt-1" id="staff-total">--</div>
@@ -631,7 +648,7 @@
       </div>
 
       <!-- Revenue summary -->
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
           <div class="text-xs text-gray-600 font-bold">Total Revenue</div>
           <div class="text-2xl font-black text-green-400 mt-1" id="rpt-total-rev">--</div>
@@ -657,7 +674,7 @@
       </div>
 
       <!-- Platform breakdown -->
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="stat-card rounded-2xl p-4 border-l-4 border-green-500">
           <div class="text-xs text-gray-600 font-bold">In-Store (POS)</div>
           <div class="text-xl font-black text-green-400 mt-1" id="rpt-pos-rev">--</div>
@@ -1400,6 +1417,35 @@
       if (name === 'staff') { loadStaffData(); loadShifts(); }
       if (name === 'reports') loadReports();
       if (name === 'settings') loadSettingsForm();
+
+      // Auto-close mobile sidebar after navigating so the destination section is fully visible
+      if (window.matchMedia('(max-width: 767px)').matches) closeSidebar();
+    }
+
+    // ─── Mobile sidebar toggle ──────────────────────────────────────────────────
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const toggle = document.getElementById('sidebar-toggle');
+      const isOpen = !sidebar.classList.contains('-translate-x-full');
+      if (isOpen) {
+        closeSidebar();
+      } else {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        toggle?.setAttribute('aria-expanded', 'true');
+        toggle?.setAttribute('aria-label', 'Close navigation');
+      }
+    }
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const toggle = document.getElementById('sidebar-toggle');
+      if (!sidebar) return;
+      sidebar.classList.add('-translate-x-full');
+      backdrop?.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', 'Open navigation');
     }
 
     function loadPlatformSection(key, data, ids, listId) {
