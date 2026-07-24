@@ -32,11 +32,81 @@ async function dbQuery(text, params) {
 const TOAST_API_BASE = 'https://ws-api.toasttab.com';
 const TOAST_AUTH_URL = `${TOAST_API_BASE}/authentication/v1/authentication/login`;
 const TOAST_ORDERS_URL = `${TOAST_API_BASE}/orders/v1/orders`;
+const TOAST_PAGE_SIZE = 100;
 const RESTAURANT_GUID = '8d0d8d7b-1fcc-43fd-8be5-1413efbaaef7';
 const RESTAURANT_NAME = process.env.RESTAURANT_NAME || 'Top Taste Jamaican Restaurant';
 
 let toastToken = null;
 let tokenExpiry = 0;
+
+// ─── Toast helpers ────────────────────────────────────────────────────────
+// Net revenue per order: gross minus tip, tax, and any voided amount.
+// Toast's totalAmount is GROSS (includes tax + tip). We want net food+bev revenue.
+function computeNetRevenue(order) {
+  const total  = parseFloat(order.totalAmount)  || 0;
+  const tip    = parseFloat(order.tipAmount)    || parseFloat(order.tip) || 0;
+  const tax    = parseFloat(order.taxAmount)    || 0;
+  const voided = parseFloat(order.voidAmount)   || 0;
+  const net    = total - tip - tax - voided;
+  return Math.max(0, parseFloat(net.toFixed(2)));
+}
+
+// Order is counted in revenue if it's not voided or deleted.
+function isRealOrder(order) {
+  const status = (order.status || '').toUpperCase();
+  return status !== 'VOIDED' && status !== 'DELETED';
+}
+
+async function toastFetch(url) {
+  const token = await getToastToken();
+  let res = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Toast-Restaurant-External-ID': RESTAURANT_GUID
+    }
+  });
+  if (res.status === 401) {
+    // Toast tokens expire ~1h; force re-auth and retry once
+    toastToken = null;
+    const fresh = await getToastToken();
+    res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${fresh}`,
+        'Toast-Restaurant-External-ID': RESTAURANT_GUID
+      }
+    });
+  }
+  if (!res.ok) throw new Error(`Toast request failed: ${res.status}`);
+  return res.json();
+}
+
+// Get all orders for a business date, paginating through every page.
+async function getToastOrdersAllPages(dateStr) {
+  const all = [];
+  for (let page = 1; page <= 100; page++) {
+    const url = `${TOAST_ORDERS_URL}?restaurantGuid=${RESTAURANT_GUID}&businessDate=${dateStr}&page=${page}&pageSize=${TOAST_PAGE_SIZE}`;
+    const data = await toastFetch(url);
+    const batch = data.orders || [];
+    all.push(...batch);
+    if (batch.length < TOAST_PAGE_SIZE) break;
+  }
+  // Exclude voided / deleted orders so totals reflect real revenue.
+  return all.filter(isRealOrder);
+}
+
+// Returns net revenue + order count for a single business date.
+async function getToastDaySummary(dateStr) {
+  try {
+    const orders = await getToastOrdersAllPages(dateStr);
+    const totalRevenue = orders.reduce((s, o) => s + computeNetRevenue(o), 0);
+    return {
+      orders: orders.length,
+      revenue: parseFloat(totalRevenue.toFixed(2))
+    };
+  } catch (e) {
+    return { orders: 0, revenue: 0, error: e.message };
+  }
+}
 
 function formatDate(date) {
   // Use New York local time so 'today' matches the restaurant's business day
@@ -52,9 +122,15 @@ function yesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); retu
 
 async function getToastToken() {
   if (toastToken && Date.now() < tokenExpiry) return toastToken;
+  // Require env vars — never fall back to hardcoded creds.
+  const clientId = process.env.TOAST_CLIENT_ID;
+  const clientSecret = process.env.TOAST_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error('TOAST_CLIENT_ID / TOAST_CLIENT_SECRET not configured');
+  }
   const credentials = {
-    clientId: process.env.TOAST_CLIENT_ID || 'fWtDwDjMLuvklqFykpMuY9tbz19g1th9',
-    clientSecret: process.env.TOAST_CLIENT_SECRET || '3_uTSyXKvPZwZUMYlCV-PJFd8Twka8QnlORetJI2kxLe1ki7aW5c9ot3ySMBykwp',
+    clientId,
+    clientSecret,
     userAccessType: 'TOAST_MACHINE'
   };
   const res = await fetch(TOAST_AUTH_URL, {
@@ -65,49 +141,32 @@ async function getToastToken() {
   if (!res.ok) throw new Error(`Toast auth failed: ${res.status}`);
   const data = await res.json();
   toastToken = data.token.accessToken;
-  tokenExpiry = Date.now() + 23 * 60 * 60 * 1000;
+  // Toast access tokens expire at ~1 hour; refresh after 55 minutes to stay safe.
+  tokenExpiry = Date.now() + 55 * 60 * 1000;
   return toastToken;
 }
 
 async function getToastOrders(dateStr) {
-  const token = await getToastToken();
-  const url = `${TOAST_ORDERS_URL}?restaurantGuid=${RESTAURANT_GUID}&businessDate=${dateStr}`;
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${token}`, 'Toast-Restaurant-External-ID': RESTAURANT_GUID }
-  });
-  if (!res.ok) throw new Error(`Toast orders failed: ${res.status}`);
-  return await res.json();
+  return await getToastOrdersAllPages(dateStr);
 }
 
-// Mock third-party data
+// Third-party delivery platforms (DoorDash, Uber Eats, Grubhub).
+// These integrations are NOT yet wired up — return an explicit "not connected"
+// stub so the dashboard never displays invented numbers. Wire real adapters in here.
 function getPlatformOrders(source, dateStr) {
-  const seed = dateStr.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  const rand = (n) => (seed * 9301 + 49297) % 233280 / 233280 * n;
-  const configs = {
-    doordash: { avgTicket: 28, ordersPerDay: 45 },
-    ubereats: { avgTicket: 32, ordersPerDay: 38 },
-    grubhub:  { avgTicket: 25, ordersPerDay: 22 }
+  return {
+    source,
+    date: dateStr,
+    connected: false,
+    message: `${source} integration not configured`,
+    orders: [],
+    summary: {
+      totalOrders: 0,
+      totalRevenue: 0,
+      avgOrderValue: 0,
+      connected: false
+    }
   };
-  const cfg = configs[source];
-  if (!cfg) return { source, date: dateStr, orders: [], summary: { totalOrders: 0, totalRevenue: 0 } };
-  const totalOrders = Math.floor(rand(cfg.ordersPerDay));
-  const totalRevenue = parseFloat((totalOrders * cfg.avgTicket * (0.9 + rand(0.2))).toFixed(2));
-  const avgOrderValue = totalOrders > 0 ? parseFloat((totalRevenue / totalOrders).toFixed(2)) : 0;
-  const statuses = ['COMPLETED','COMPLETED','COMPLETED','ACCEPTED','PREPARING'];
-  const orders = [];
-  for (let i = 0; i < totalOrders; i++) {
-    const hour = 10 + Math.floor(rand(14));
-    const minute = Math.floor(rand(60));
-    orders.push({
-      orderId: `${source.toUpperCase().slice(0,2)}-ORD-${dateStr}-${i + 100}`,
-      placedAt: `${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}`,
-      status: statuses[Math.floor(rand(statuses.length))],
-      items: Math.floor(rand(5)) + 1,
-      subtotal: parseFloat((rand(cfg.avgTicket * 0.8) + cfg.avgTicket * 0.2).toFixed(2)),
-      total: parseFloat((rand(cfg.avgTicket) + cfg.avgTicket * 0.5).toFixed(2))
-    });
-  }
-  return { source, date: dateStr, orders, summary: { totalOrders, totalRevenue, avgOrderValue } };
 }
 
 // ─── Routes ────────────────────────────────────────────────────────────────
@@ -121,9 +180,8 @@ app.get('/api/pos/:range', async (req, res) => {
   else if (range === 'yesterday') dateStr = yesterdayStr();
   else return res.status(400).json({ error: 'Use /api/pos/today or /api/pos/yesterday' });
   try {
-    const data = await getToastOrders(dateStr);
-    const orders = data.orders || [];
-    const totalRevenue = orders.reduce((sum, o) => sum + (parseFloat(o.totalAmount) || 0), 0);
+    const orders = await getToastOrders(dateStr);
+    const totalRevenue = orders.reduce((sum, o) => sum + computeNetRevenue(o), 0);
     const totalOrders = orders.length;
     res.json({
       source: 'toast_pos', date: dateStr, orders,
@@ -153,25 +211,36 @@ app.get('/api/stats/summary', async (req, res) => {
   const today = todayStr();
   let posSummary = { totalOrders: 0, totalRevenue: 0 };
   try {
-    const data = await getToastOrders(today);
-    const orders = data.orders || [];
-    const totalRevenue = orders.reduce((sum, o) => sum + (parseFloat(o.totalAmount) || 0), 0);
-    posSummary = { totalOrders: orders.length, totalRevenue: parseFloat(totalRevenue.toFixed(2)) };
-  } catch (e) { /* POS may fail */ }
+    const orders = await getToastOrders(today);
+    const totalRevenue = orders.reduce((s, o) => s + computeNetRevenue(o), 0);
+    posSummary = {
+      totalOrders: orders.length,
+      totalRevenue: parseFloat(totalRevenue.toFixed(2))
+    };
+  } catch (e) { /* POS may fail — leave zeroes */ }
   const dd = getPlatformOrders('doordash', today).summary;
   const ue = getPlatformOrders('ubereats', today).summary;
   const gh = getPlatformOrders('grubhub', today).summary;
-  const thirdPartyTotal = dd.totalRevenue + ue.totalRevenue + gh.totalRevenue;
-  const thirdPartyOrders = dd.totalOrders + ue.totalOrders + gh.totalOrders;
-  const combinedRevenue = posSummary.totalRevenue + thirdPartyTotal;
-  const combinedOrders = posSummary.totalOrders + thirdPartyOrders;
+  // Third-party platforms are not yet integrated; totals reflect only Toast POS.
+  // Once adapters land, replace with sum of dd/ue/gh.totalRevenue.
+  const combinedRevenue = posSummary.totalRevenue;
+  const combinedOrders = posSummary.totalOrders;
   res.json({
-    date: today, pos: posSummary, doordash: dd, ubereats: ue, grubhub: gh,
-    thirdParty: { totalOrders: thirdPartyOrders, totalRevenue: parseFloat(thirdPartyTotal.toFixed(2)) },
+    date: today,
+    pos: posSummary,
+    doordash: dd,
+    ubereats: ue,
+    grubhub: gh,
+    thirdParty: {
+      totalOrders: 0,
+      totalRevenue: 0,
+      connected: { doordash: false, ubereats: false, grubhub: false }
+    },
     combined: {
       totalOrders: combinedOrders,
       totalRevenue: parseFloat(combinedRevenue.toFixed(2)),
-      avgOrderValue: combinedOrders > 0 ? parseFloat((combinedRevenue / combinedOrders).toFixed(2)) : 0
+      avgOrderValue: combinedOrders > 0 ? parseFloat((combinedRevenue / combinedOrders).toFixed(2)) : 0,
+      connected: { doordash: false, ubereats: false, grubhub: false }
     }
   });
 });
@@ -415,7 +484,8 @@ app.get('/api/staff/labor', async (req, res) => {
 // SETTINGS API
 // ═══════════════════════════════════════════════════════════════════════════
 app.get('/api/settings', async (req, res) => {
-  // Defaults from env vars — restaurant_name is always available
+  // Defaults from env vars — restaurant_name is always available.
+  // POS credentials (Toast client id/secret) are NEVER returned by this endpoint.
   const defaults = {
     restaurant_name: RESTAURANT_NAME,
     restaurant_phone: process.env.RESTAURANT_PHONE || '',
@@ -423,7 +493,7 @@ app.get('/api/settings', async (req, res) => {
     doordash_commission: 0.30,
     ubereats_commission: 0.30,
     grubhub_commission: 0.275,
-    toast_client_id: process.env.TOAST_CLIENT_ID || '',
+    toast_configured: Boolean(process.env.TOAST_CLIENT_ID && process.env.TOAST_CLIENT_SECRET)
   };
   if (!pool) return res.json(defaults);
   try {
@@ -452,34 +522,34 @@ app.put('/api/settings/:key', async (req, res) => {
 // REPORTS / ANALYTICS
 // ═══════════════════════════════════════════════════════════════════════════
 app.get('/api/reports/sales', async (req, res) => {
-  // Mock daily sales for the last N days (would normally come from order history)
+  // Real Toast history for the last N days. Third-party platforms are still
+  // placeholders (connected: false) until their adapters ship.
   const { days = 7 } = req.query;
-  const numDays = parseInt(days);
+  const numDays = Math.min(Math.max(parseInt(days) || 7, 1), 30);
   const out = [];
   for (let i = numDays - 1; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     const dateStr = formatDate(d);
-    const seed = dateStr.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-    const rand = (n) => (seed * 9301 + 49297) % 233280 / 233280 * n;
-    const pos = Math.floor(rand(28)) * 38;
-    const dd = Math.floor(rand(45)) * 28;
-    const ue = Math.floor(rand(38)) * 32;
-    const gh = Math.floor(rand(22)) * 25;
-    const total = pos + dd + ue + gh;
+    const summary = await getToastDaySummary(dateStr);
     out.push({
       date: d.toISOString().split('T')[0],
-      pos, doordash: dd, ubereats: ue, grubhub: gh,
-      total,
-      orders: Math.floor(rand(28)) + Math.floor(rand(45)) + Math.floor(rand(38)) + Math.floor(rand(22))
+      pos: summary.revenue,
+      doordash: 0,
+      ubereats: 0,
+      grubhub: 0,
+      total: summary.revenue,
+      orders: summary.orders
     });
   }
   res.json(out);
 });
 
 app.get('/api/reports/top-items', async (req, res) => {
-  // If menu items exist, use them; else generate mock
-  if (!pool) return res.json([]);
+  // Real top items require either (a) menu in DB + Toast order line aggregation,
+  // or (b) Toast reporting API. Until then, return empty + flag so the UI doesn't
+  // show invented numbers.
+  if (!pool) return res.json({ items: [], connected: false, message: 'Menu database not configured' });
   try {
     const r = await dbQuery(`
       SELECT id, name, price, cost,
@@ -490,57 +560,54 @@ app.get('/api/reports/top-items', async (req, res) => {
       LIMIT 10
     `);
     if (r.rows.length === 0) {
-      // Mock data when no menu exists
-      return res.json([
-        { name: 'Jerk Chicken Platter', count: 47, revenue: 612.53, margin_pct: 68 },
-        { name: 'Oxtail Stew', count: 38, revenue: 798.42, margin_pct: 72 },
-        { name: 'Curry Goat', count: 31, revenue: 651.31, margin_pct: 65 },
-        { name: 'Plantains', count: 89, revenue: 445.11, margin_pct: 80 },
-        { name: 'Rice & Peas', count: 76, revenue: 304.00, margin_pct: 78 },
-        { name: 'Ackee & Saltfish', count: 22, revenue: 286.00, margin_pct: 64 },
-        { name: 'Beef Patty', count: 64, revenue: 192.00, margin_pct: 75 },
-        { name: 'Sorrel Drink', count: 53, revenue: 159.00, margin_pct: 85 }
-      ]);
+      return res.json({ items: [], connected: false, message: 'No menu items configured' });
     }
-    // For each menu item, generate mock sales count
-    return res.json(r.rows.map(it => ({
+    // Counts/revenue per item need Toast reporting integration; placeholder zeros.
+    const items = r.rows.map(it => ({
       id: it.id,
       name: it.name,
       price: parseFloat(it.price),
       cost: parseFloat(it.cost || 0),
       margin_pct: parseFloat(it.margin_pct),
-      count: Math.floor(Math.random() * 50) + 5,
-      revenue: parseFloat(it.price) * (Math.floor(Math.random() * 50) + 5)
-    })));
+      count: 0,
+      revenue: 0,
+      message: 'Per-item sales require Toast reporting integration'
+    }));
+    res.json({ items, connected: false });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/reports/profit', async (req, res) => {
-  // Revenue minus commission, minus labor
+  // Toast POS revenue only — third-party platforms not integrated yet.
   try {
-    const salesRes = await fetch(`http://localhost:${process.env.PORT || 3000}/api/reports/sales?days=30`);
-    const sales = await salesRes.json();
-    const totalRevenue = sales.reduce((s, d) => s + d.total, 0);
-    const totalOrders = sales.reduce((s, d) => s + d.orders, 0);
+    const days = 30;
+    const out = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      out.push(await getToastDaySummary(formatDate(d)));
+    }
+    const totalRevenue = out.reduce((s, d) => s + d.revenue, 0);
+    const totalOrders = out.reduce((s, d) => s + d.orders, 0);
 
-    // Estimated costs
-    const thirdPartyShare = sales.reduce((s, d) => s + d.doordash + d.ubereats + d.grubhub, 0) / totalRevenue;
-    const commission = totalRevenue * thirdPartyShare * 0.30; // ~30% commission
-    const foodCost = totalRevenue * 0.30; // ~30% food cost industry standard
+    // Industry-standard estimates until real COGS / labor are wired up.
+    const foodCost = totalRevenue * 0.30; // ~30% food cost
     const laborEst = totalRevenue * 0.25; // ~25% labor cost
+    const commission = 0; // no third-party until integrated
     const netProfit = totalRevenue - commission - foodCost - laborEst;
 
     res.json({
       period: 'last_30_days',
       revenue: parseFloat(totalRevenue.toFixed(2)),
       orders: totalOrders,
+      source: 'toast_pos',
       costs: {
         third_party_commission: parseFloat(commission.toFixed(2)),
         food_cost: parseFloat(foodCost.toFixed(2)),
         labor: parseFloat(laborEst.toFixed(2))
       },
       net_profit: parseFloat(netProfit.toFixed(2)),
-      margin_pct: parseFloat(((netProfit / totalRevenue) * 100).toFixed(1))
+      margin_pct: totalRevenue > 0 ? parseFloat(((netProfit / totalRevenue) * 100).toFixed(1)) : 0
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

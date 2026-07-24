@@ -681,19 +681,28 @@
           <div class="text-xs text-gray-500 mt-1" id="rpt-pos-pct">-- of total</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-red-500">
-          <div class="text-xs text-gray-600 font-bold">DoorDash</div>
-          <div class="text-xl font-black text-red-400 mt-1" id="rpt-dd-rev">--</div>
-          <div class="text-xs text-gray-500 mt-1" id="rpt-dd-pct">-- of total</div>
+          <div class="text-xs text-gray-600 font-bold flex items-center gap-1">
+            DoorDash
+            <span class="text-[10px] text-gray-500 font-normal" title="Integration not yet connected">ⓘ not connected</span>
+          </div>
+          <div class="text-xl font-black text-red-400/50 mt-1" id="rpt-dd-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-dd-pct">awaiting integration</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-blue-500">
-          <div class="text-xs text-gray-600 font-bold">Uber Eats</div>
-          <div class="text-xl font-black text-blue-400 mt-1" id="rpt-ue-rev">--</div>
-          <div class="text-xs text-gray-500 mt-1" id="rpt-ue-pct">-- of total</div>
+          <div class="text-xs text-gray-600 font-bold flex items-center gap-1">
+            Uber Eats
+            <span class="text-[10px] text-gray-500 font-normal" title="Integration not yet connected">ⓘ not connected</span>
+          </div>
+          <div class="text-xl font-black text-blue-400/50 mt-1" id="rpt-ue-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-ue-pct">awaiting integration</div>
         </div>
         <div class="stat-card rounded-2xl p-4 border-l-4 border-yellow-500">
-          <div class="text-xs text-gray-600 font-bold">Grubhub</div>
-          <div class="text-xl font-black text-yellow-400 mt-1" id="rpt-gh-rev">--</div>
-          <div class="text-xs text-gray-500 mt-1" id="rpt-gh-pct">-- of total</div>
+          <div class="text-xs text-gray-600 font-bold flex items-center gap-1">
+            Grubhub
+            <span class="text-[10px] text-gray-500 font-normal" title="Integration not yet connected">ⓘ not connected</span>
+          </div>
+          <div class="text-xl font-black text-yellow-400/50 mt-1" id="rpt-gh-rev">--</div>
+          <div class="text-xs text-gray-500 mt-1" id="rpt-gh-pct">awaiting integration</div>
         </div>
       </div>
 
@@ -770,18 +779,16 @@
 
       <!-- Toast API -->
       <div class="stat-card rounded-2xl p-6">
-        <div class="font-bold text-white mb-4">🔑 Toast POS API</div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Client ID</label>
-            <input type="password" id="set-toast-client-id" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
-          </div>
-          <div>
-            <label class="text-xs text-gray-600 font-bold uppercase tracking-wider">Client Secret</label>
-            <input type="password" id="set-toast-client-secret" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500/50 mt-1">
-          </div>
+        <div class="font-bold text-white mb-2">🔑 Toast POS API</div>
+        <div id="toast-config-status" class="text-xs text-gray-400 mb-4">Status: checking…</div>
+        <div class="text-xs text-gray-500 mb-4">
+          Toast credentials are configured server-side via environment variables
+          (Render &rarr; Environment &rarr; <code class="text-gray-400">TOAST_CLIENT_ID</code> / <code class="text-gray-400">TOAST_CLIENT_SECRET</code>).
+          They are never stored in the dashboard database and are not editable from this UI.
         </div>
-        <button onclick="saveToastAPI()" class="mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-6 py-2 rounded-xl font-bold text-sm transition-colors">Save API Keys</button>
+        <div class="text-xs text-yellow-400/80">
+          ⚠ If you need to rotate Toast keys, do it in Render and redeploy.
+        </div>
       </div>
     </section>
 
@@ -2440,8 +2447,12 @@
         if (document.getElementById('set-dd-comm')) document.getElementById('set-dd-comm').value = (v('doordash_commission') || 0.30) * 100;
         if (document.getElementById('set-ue-comm')) document.getElementById('set-ue-comm').value = (v('ubereats_commission') || 0.30) * 100;
         if (document.getElementById('set-gh-comm')) document.getElementById('set-gh-comm').value = (v('grubhub_commission') || 0.275) * 100;
-        if (document.getElementById('set-toast-client-id')) document.getElementById('set-toast-client-id').value = v('toast_client_id') || '';
-        renderHoursEditor(settings.hours || {});
+        // Toast credentials are configured server-side (env vars only); not editable here.
+        const toastStatus = document.getElementById('toast-config-status');
+        if (toastStatus) {
+          toastStatus.textContent = v('toast_configured') ? 'Status: ✅ Configured' : 'Status: ❌ Not configured';
+          toastStatus.className = v('toast_configured') ? 'text-xs text-green-400 mb-4' : 'text-xs text-red-400 mb-4';
+        }        renderHoursEditor(settings.hours || {});
       } catch (e) { console.error('Settings load failed', e); }
     }
 
@@ -2497,16 +2508,6 @@
           saveSetting('grubhub_commission', parseFloat(document.getElementById('set-gh-comm').value) / 100 || 0.275)
         ]);
         alert('Commissions saved!');
-      } catch (e) { alert('Save failed: ' + e.message); }
-    }
-
-    async function saveToastAPI() {
-      try {
-        await Promise.all([
-          saveSetting('toast_client_id', document.getElementById('set-toast-client-id').value),
-          saveSetting('toast_client_secret', document.getElementById('set-toast-client-secret').value)
-        ]);
-        alert('Toast API keys saved!');
       } catch (e) { alert('Save failed: ' + e.message); }
     }
 
