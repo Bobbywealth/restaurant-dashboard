@@ -31,7 +31,9 @@ async function dbQuery(text, params) {
 // ─── Toast POS Config ─────────────────────────────────────────────────────
 const TOAST_API_BASE = 'https://ws-api.toasttab.com';
 const TOAST_AUTH_URL = `${TOAST_API_BASE}/authentication/v1/authentication/login`;
-const TOAST_ORDERS_URL = `${TOAST_API_BASE}/orders/v1/orders`;
+// Toast moved bulk orders from /orders/v1/orders to /orders/v2/ordersBulk.
+// v1 now 404s; v2 uses startDate/endDate ISO timestamps instead of businessDate.
+const TOAST_ORDERS_URL = `${TOAST_API_BASE}/orders/v2/ordersBulk`;
 const TOAST_PAGE_SIZE = 100;
 const RESTAURANT_GUID = '8d0d8d7b-1fcc-43fd-8be5-1413efbaaef7';
 const RESTAURANT_NAME = process.env.RESTAURANT_NAME || 'Top Taste Jamaican Restaurant';
@@ -81,10 +83,17 @@ async function toastFetch(url) {
 }
 
 // Get all orders for a business date, paginating through every page.
+// Toast /orders/v2/ordersBulk uses ISO-8601 startDate/endDate; businessDate
+// is gone. We convert YYYYMMDD → ISO America/New_York day boundaries.
 async function getToastOrdersAllPages(dateStr) {
+  const y = dateStr.slice(0, 4);
+  const m = dateStr.slice(4, 6);
+  const d = dateStr.slice(6, 8);
+  const startDate = `${y}-${m}-${d}T00:00:00.000-04:00`;
+  const endDate   = `${y}-${m}-${d}T23:59:59.999-04:00`;
   const all = [];
   for (let page = 1; page <= 100; page++) {
-    const url = `${TOAST_ORDERS_URL}?restaurantGuid=${RESTAURANT_GUID}&businessDate=${dateStr}&page=${page}&pageSize=${TOAST_PAGE_SIZE}`;
+    const url = `${TOAST_ORDERS_URL}?restaurantGuid=${RESTAURANT_GUID}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&page=${page}&pageSize=${TOAST_PAGE_SIZE}`;
     const data = await toastFetch(url);
     const batch = data.orders || [];
     all.push(...batch);
@@ -131,7 +140,7 @@ async function getToastToken() {
   const credentials = {
     clientId,
     clientSecret,
-    userAccessType: 'TOAST_MACHINE'
+    userAccessType: 'TOAST_MACHINE_CLIENT'
   };
   const res = await fetch(TOAST_AUTH_URL, {
     method: 'POST',
