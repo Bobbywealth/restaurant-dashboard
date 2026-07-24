@@ -1,16 +1,24 @@
-name: Deploy to Render
-
+name: Deploy to Netlify
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Render Deploy
-        run: |
-          curl -s -X POST https://api.render.com/v1/services/srv-***/deploys \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli@26.1.0
+
+      - name: Deploy to production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: netlify deploy --prod --dir=frontend --functions=netlify/functions --message "GitHub Actions: ${{ github.event.head_commit.message }}"
