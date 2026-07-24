@@ -1152,43 +1152,10 @@
 
     const dateFilter = document.getElementById('dateFilter');
 
-    // ─── Mock Data Engine (seeded deterministic random) ─────────────────────────
-    function seededRand(seed, n) {
-      return ((seed * 9301 + 49297) % 233280) / 233280 * n;
-    }
-    function dateSeed(str) {
-      return str.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
-    }
-
-    function generateMockData(source, dateStr) {
-      const seed = dateSeed(dateStr);
-      const configs = {
-        doordash:  { avgTicket: 28, ordersPerDay: 45 },
-        ubereats:  { avgTicket: 32, ordersPerDay: 38 },
-        grubhub:   { avgTicket: 25, ordersPerDay: 22 },
-        toast_pos: { avgTicket: 38, ordersPerDay: 28 }
-      };
-      const cfg = configs[source];
-      if (!cfg) return { source, date: dateStr, orders: [], summary: { totalOrders: 0, totalRevenue: 0, avgOrderValue: 0 } };
-      const totalOrders = Math.floor(seededRand(seed + 1, cfg.ordersPerDay));
-      const totalRevenue = parseFloat((totalOrders * cfg.avgTicket * (0.9 + seededRand(seed + 2, 0.2))).toFixed(2));
-      const avgOrderValue = totalOrders > 0 ? parseFloat((totalRevenue / totalOrders).toFixed(2)) : 0;
-      const statuses = ['COMPLETED','COMPLETED','COMPLETED','ACCEPTED','PREPARING'];
-      const orders = [];
-      for (let i = 0; i < totalOrders; i++) {
-        const hour = 10 + Math.floor(seededRand(seed + i * 7 + 100, 14));
-        const minute = Math.floor(seededRand(seed + i * 13 + 200, 60));
-        orders.push({
-          orderId: `${source === 'toast_pos' ? 'POS' : source.toUpperCase().slice(0,2)}-ORD-${dateStr}-${i+100}`,
-          placedAt: `${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}`,
-          status: statuses[Math.floor(seededRand(seed + i * 17 + 300, statuses.length))],
-          items: Math.floor(seededRand(seed + i * 19 + 400, 5)) + 1,
-          subtotal: parseFloat((seededRand(seed + i * 23 + 500, cfg.avgTicket * 0.8) + cfg.avgTicket * 0.2).toFixed(2)),
-          total: parseFloat((seededRand(seed + i * 29 + 600, cfg.avgTicket) + cfg.avgTicket * 0.5).toFixed(2))
-        });
-      }
-      return { source, date: dateStr, orders, summary: { totalOrders, totalRevenue, avgOrderValue } };
-    }
+    // (Removed client-side mock data engine — all order/revenue data now flows
+    //  from real API endpoints. When a platform is not connected the API
+    //  returns { connected: false, summary: zeroed } which the UI renders
+    //  honestly instead of inventing numbers.)
 
     // ─── Utilities ───────────────────────────────────────────────────────────────
     function fmt(n) { return '$' + (n || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
@@ -1243,20 +1210,30 @@
       const dateStr = getDateStr(isToday);
       document.getElementById('refreshIcon').style.animation = 'spin 0.5s linear infinite';
 
-      const pos = generateMockData('toast_pos', dateStr);
-      const dd  = generateMockData('doordash', dateStr);
-      const ue  = generateMockData('ubereats', dateStr);
-      const gh  = generateMockData('grubhub', dateStr);
-      state.pos = pos; state.dd = dd; state.ue = ue; state.gh = gh;
+      // Call real APIs. If a platform isn't integrated yet the API returns
+      // { connected: false } with zeroed summary; we never invent numbers.
+      let pos = null, dd = null, ue = null, gh = null;
+      try {
+        [pos, dd, ue, gh] = await Promise.all([
+          fetch(`/api/pos/${isToday ? 'today' : 'yesterday'}`).then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch(`/api/doordash/${isToday ? 'today' : 'yesterday'}`).then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch(`/api/ubereats/${isToday ? 'today' : 'yesterday'}`).then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch(`/api/grubhub/${isToday ? 'today' : 'yesterday'}`).then(r => r.ok ? r.json() : null).catch(() => null)
+        ]);
+      } catch (e) { /* keep nulls */ }
+      state.pos = pos || { summary: { totalOrders: 0, totalRevenue: 0 }, orders: [], connected: false };
+      state.dd  = dd  || { summary: { totalOrders: 0, totalRevenue: 0 }, orders: [], connected: false };
+      state.ue  = ue  || { summary: { totalOrders: 0, totalRevenue: 0 }, orders: [], connected: false };
+      state.gh  = gh  || { summary: { totalOrders: 0, totalRevenue: 0 }, orders: [], connected: false };
 
-      const revenue = pos.summary.totalRevenue + dd.summary.totalRevenue + ue.summary.totalRevenue + gh.summary.totalRevenue;
-      const orders  = pos.summary.totalOrders + dd.summary.totalOrders + ue.summary.totalOrders + gh.summary.totalOrders;
+      const revenue = (pos?.summary?.totalRevenue || 0);
+      const orders  = (pos?.summary?.totalOrders || 0);
       const expenseBase = Math.round(revenue * 0.45);
       const expenses = state.expenses.reduce((a,e) => a + (e.date === dateStr ? e.amount : 0), 0) || expenseBase;
       const profit = revenue - expenses;
 
-      document.getElementById('kpi-revenue').textContent  = fmt(revenue);
-      document.getElementById('kpi-orders').textContent   = orders;
+      document.getElementById('kpi-revenue').textContent  = pos ? fmt(revenue) : '—';
+      document.getElementById('kpi-orders').textContent   = pos ? orders : '—';
       document.getElementById('kpi-expenses').textContent = fmt(expenses);
       document.getElementById('kpi-profit').textContent  = fmt(profit);
       document.getElementById('kpi-inventory').textContent = state.inventory.filter(i=>i.qty > i.min).length || '--';
@@ -1369,17 +1346,8 @@
           data = all.flatMap(d => (d.orders || []).map(o => ({...o, _source: d.source, _id: o.orderId || o.id})));
           if (!data.length) throw new Error('empty');
         } catch (e) {
-          // Fallback to mock data if API returns nothing
-          const posM = generateMockData('toast_pos', dateStr);
-          const ddM  = generateMockData('doordash', dateStr);
-          const ueM  = generateMockData('ubereats', dateStr);
-          const ghM  = generateMockData('grubhub', dateStr);
-          data = [
-            ...posM.orders.map(o => ({...o, _source:'toast_pos', _id:o.orderId})),
-            ...ddM.orders.map(o => ({...o, _source:'doordash', _id:o.orderId})),
-            ...ueM.orders.map(o => ({...o, _source:'ubereats', _id:o.orderId})),
-            ...ghM.orders.map(o => ({...o, _source:'grubhub', _id:o.orderId}))
-          ];
+          // API unavailable or returned nothing — show honest empty state, never mock data.
+          data = [];
         }
       } else {
         try {
@@ -1390,8 +1358,8 @@
             if (!data.length) throw new Error('empty');
           } else { throw new Error('non-200'); }
         } catch (e) {
-          const d = generateMockData(plat, dateStr);
-          data = d.orders.map(o => ({...o, _source:plat, _id:o.orderId}));
+          // Platform not integrated — empty array, render an honest "not connected" row.
+          data = [];
         }
       }
 
