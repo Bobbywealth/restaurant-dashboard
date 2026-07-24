@@ -5,6 +5,13 @@
 [build.environment]
   NODE_ENV = "production"
 
+# Route all /api/* traffic to the serverless Express wrapper.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]

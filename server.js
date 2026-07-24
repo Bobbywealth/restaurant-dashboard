@@ -656,5 +656,10 @@ app.get('/api/search', async (req, res) => {
 // Serve frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Restaurant dashboard running on ${PORT}`));
+// Export for serverless platforms (Netlify Functions wrap this with serverless-http).
+module.exports = app;
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Restaurant dashboard running on ${PORT}`));
+}
